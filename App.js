@@ -36,10 +36,9 @@ export default function App() {
     ...MD3LightTheme,
     colors: {
       ...MD3LightTheme.colors,
-      primary: '#0D47A1', // change to your brand color
+      primary: '#0D47A1',
       secondary: '#FF6F00',
     },
-    // you can override fonts here if needed
   };
 
   return (
