@@ -29,19 +29,18 @@ export default function App() {
   });
 
   if (!fontsLoaded) {
-    // simple spinner while fonts load
     return <ActivityIndicator style={{ flex: 1 }} size="large" />;
   }
 
-  // tweak the MD3 theme for PlayNxt branding
-  const theme = {
-    ...MD3LightTheme,
-    colors: {
-      ...MD3LightTheme.colors,
-      primary: '#0D47A1',
-      secondary: '#FF6F00',
-    },
-  };
+const theme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: '#2E7D32',     // main green (PlayNxt)
+    secondary: '#C8E6C9',   // light green accents
+    background: '#F1F8F6',  // soft background
+  },
+};
 
   return (
     <SafeAreaProvider>
