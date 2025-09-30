@@ -19,6 +19,8 @@ import {
   Roboto_700Bold,
 } from '@expo-google-fonts/roboto';
 
+import Navigation from './src/navigation/navigation';
+
 export default function App() {
   const [fontsLoaded] = useFonts({
     Roboto_400Regular,
@@ -44,7 +46,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <PaperProvider theme={theme}>
-        <MainScreen />
+        <Navigation />
       </PaperProvider>
     </SafeAreaProvider>
   );
