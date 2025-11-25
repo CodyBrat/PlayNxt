@@ -4,74 +4,52 @@ import { View, StyleSheet } from 'react-native';
 import {
   Provider as PaperProvider,
   MD3LightTheme,
+  Appbar,
+  Button,
+  Card,
+  FAB,
   ActivityIndicator,
+  Text,
 } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import {
   useFonts,
-  Inter_400Regular,
-  Inter_500Medium,
-  Inter_600SemiBold,
-  Inter_700Bold,
-} from '@expo-google-fonts/inter';
-import {
-  Poppins_600SemiBold,
-  Poppins_700Bold,
-} from '@expo-google-fonts/poppins';
+  Roboto_400Regular,
+  Roboto_500Medium,
+  Roboto_700Bold,
+} from '@expo-google-fonts/roboto';
 
 import Navigation from './src/navigation/navigation';
-import { AppProvider } from './src/context/AppContext';
-import { colors } from './src/theme/theme';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
-    Inter_400Regular,
-    Inter_500Medium,
-    Inter_600SemiBold,
-    Inter_700Bold,
-    Poppins_600SemiBold,
-    Poppins_700Bold,
+    Roboto_400Regular,
+    Roboto_500Medium,
+    Roboto_700Bold,
   });
 
   if (!fontsLoaded) {
-    return <ActivityIndicator style={{ flex: 1 }} size="large" color={colors.primary} />;
+    return <ActivityIndicator style={{ flex: 1 }} size="large" />;
   }
 
   const theme = {
     ...MD3LightTheme,
     colors: {
       ...MD3LightTheme.colors,
-      primary: colors.primary,
-      secondary: colors.accent,
-      background: colors.background,
-      surface: colors.surface,
-      text: colors.text,
-    },
-    fonts: {
-      ...MD3LightTheme.fonts,
-      regular: {
-        fontFamily: 'Inter_400Regular',
-      },
-      medium: {
-        fontFamily: 'Inter_500Medium',
-      },
-      bold: {
-        fontFamily: 'Inter_700Bold',
-      },
+      primary: '#2E7D32',     // main green (PlayNxt)
+      secondary: '#C8E6C9',   // light green accents
+      background: '#F1F8F6',  // soft background
     },
   };
 
   return (
     <SafeAreaProvider>
-      <AppProvider>
-        <PaperProvider theme={theme}>
-          <Navigation />
-        </PaperProvider>
-      </AppProvider>
+      <PaperProvider theme={theme}>
+        <Navigation />
+      </PaperProvider>
     </SafeAreaProvider>
   );
 }
-
 
 function MainScreen() {
   return (
