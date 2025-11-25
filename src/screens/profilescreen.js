@@ -1,6 +1,6 @@
 // src/screens/profilescreen.js
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useApp } from '../context/AppContext';
@@ -16,13 +16,52 @@ export default function ProfileScreen() {
     { label: 'Reviews', value: '0', icon: 'star' },
   ];
 
+  const handleEditProfile = () => {
+    Alert.alert('Edit Profile', 'Profile editing feature coming soon!');
+  };
+
+  const handlePaymentMethods = () => {
+    Alert.alert('Payment Methods', 'Manage your payment methods here');
+  };
+
+  const handleNotifications = () => {
+    Alert.alert('Notifications', 'Notification settings coming soon!');
+  };
+
+  const handlePrivacy = () => {
+    Alert.alert('Privacy & Security', 'Privacy settings coming soon!');
+  };
+
+  const handleHelp = () => {
+    Alert.alert('Help & Support', 'Need help? Contact us at support@playnxt.com');
+  };
+
+  const handleAbout = () => {
+    Alert.alert('About PlayNxt', 'PlayNxt v1.0.0\n\nBook. Play. Connect.\n\n© 2023 PlayNxt. All rights reserved.');
+  };
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Logout',
+          style: 'destructive',
+          onPress: () => Alert.alert('Logged Out', 'You have been logged out successfully')
+        },
+      ]
+    );
+  };
+
   const menuItems = [
-    { label: 'Edit Profile', icon: 'account-edit', onPress: () => { } },
-    { label: 'Payment Methods', icon: 'credit-card', onPress: () => { } },
-    { label: 'Notifications', icon: 'bell', onPress: () => { } },
-    { label: 'Privacy & Security', icon: 'shield-check', onPress: () => { } },
-    { label: 'Help & Support', icon: 'help-circle', onPress: () => { } },
-    { label: 'About', icon: 'information', onPress: () => { } },
+    { label: 'Edit Profile', icon: 'account-edit', onPress: handleEditProfile },
+    { label: 'Payment Methods', icon: 'credit-card', onPress: handlePaymentMethods },
+    { label: 'Notifications', icon: 'bell', onPress: handleNotifications },
+    { label: 'Privacy & Security', icon: 'shield-check', onPress: handlePrivacy },
+    { label: 'Help & Support', icon: 'help-circle', onPress: handleHelp },
+    { label: 'About', icon: 'information', onPress: handleAbout },
   ];
 
   return (
@@ -84,7 +123,7 @@ export default function ProfileScreen() {
         </View>
 
         {/* Logout Button */}
-        <TouchableOpacity style={styles.logoutButton}>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <MaterialCommunityIcons name="logout" size={20} color={colors.error} />
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>

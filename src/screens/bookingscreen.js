@@ -1,18 +1,54 @@
 // src/screens/bookingscreen.js
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useApp } from '../context/AppContext';
+import { ActionTypes } from '../context/appReducer';
 import { colors, spacing, typography, borderRadius, shadows } from '../theme/theme';
 
 export default function BookingScreen() {
-  const { state } = useApp();
+  const { state, dispatch } = useApp();
   const [selectedTab, setSelectedTab] = useState('upcoming');
 
   const bookings = selectedTab === 'upcoming'
     ? state.bookings.upcoming
     : state.bookings.past;
+
+  const handleReschedule = (bookingId) => {
+    Alert.alert(
+      'Reschedule Booking',
+      'Choose a new date and time for your booking',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Reschedule',
+          onPress: () => Alert.alert('Success', 'Booking rescheduled successfully!')
+        },
+      ]
+    );
+  };
+
+  const handleCancel = (bookingId) => {
+    Alert.alert(
+      'Cancel Booking',
+      'Are you sure you want to cancel this booking? This action cannot be undone.',
+      [
+        { text: 'No', style: 'cancel' },
+        {
+          text: 'Yes, Cancel',
+          style: 'destructive',
+          onPress: () => {
+            dispatch({
+              type: ActionTypes.CANCEL_BOOKING,
+              payload: bookingId,
+            });
+            Alert.alert('Cancelled', 'Your booking has been cancelled');
+          }
+        },
+      ]
+    );
+  };
 
   const renderBookingCard = ({ item }) => (
     <View style={styles.card}>
@@ -43,10 +79,16 @@ export default function BookingScreen() {
 
       {selectedTab === 'upcoming' && (
         <View style={styles.actions}>
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => handleReschedule(item.id)}
+          >
             <Text style={styles.actionButtonText}>Reschedule</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.actionButton, styles.cancelButton]}>
+          <TouchableOpacity
+            style={[styles.actionButton, styles.cancelButton]}
+            onPress={() => handleCancel(item.id)}
+          >
             <Text style={[styles.actionButtonText, styles.cancelText]}>Cancel</Text>
           </TouchableOpacity>
         </View>

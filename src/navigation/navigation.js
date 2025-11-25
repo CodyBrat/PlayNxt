@@ -1,14 +1,27 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import HomeScreen from '../screens/homescreen';
+import VenueDetailScreen from '../screens/VenueDetailScreen';
 import BookingScreen from '../screens/bookingscreen';
 import ProfileScreen from '../screens/profilescreen';
 import { colors } from '../theme/theme';
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
+// Home Stack Navigator
+function HomeStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="HomeMain" component={HomeScreen} />
+      <Stack.Screen name="VenueDetail" component={VenueDetailScreen} />
+    </Stack.Navigator>
+  );
+}
 
 export default function Navigation() {
   return (
@@ -37,7 +50,7 @@ export default function Navigation() {
       >
         <Tab.Screen
           name="Home"
-          component={HomeScreen}
+          component={HomeStack}
           options={{
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons name="soccer-field" color={color} size={size} />

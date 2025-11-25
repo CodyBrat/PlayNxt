@@ -22,7 +22,7 @@ const SPORTS = [
   'Volleyball',
 ];
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const { state, dispatch } = useApp();
   const [refreshing, setRefreshing] = useState(false);
 
@@ -58,6 +58,10 @@ export default function HomeScreen() {
     });
   };
 
+  const handleVenuePress = (venueId) => {
+    navigation.navigate('VenueDetail', { venueId });
+  };
+
   const handleRefresh = () => {
     setRefreshing(true);
     // Simulate refresh
@@ -76,7 +80,7 @@ export default function HomeScreen() {
     <VenueCard
       venue={item}
       isFavorite={favorites.includes(item.id)}
-      onPress={() => { }}
+      onPress={() => handleVenuePress(item.id)}
       onFavoritePress={() => handleFavoritePress(item.id)}
     />
   );
