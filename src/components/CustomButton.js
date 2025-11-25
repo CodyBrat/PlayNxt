@@ -1,0 +1,130 @@
+// src/components/CustomButton.js
+import React from 'react';
+import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import theme from '../theme/theme';
+
+const CustomButton = ({
+    title,
+    onPress,
+    variant = 'primary', // 'primary' | 'outline' | 'text'
+    size = 'medium', // 'small' | 'medium' | 'large'
+    disabled = false,
+    loading = false,
+    style,
+    textStyle,
+    icon,
+}) => {
+    const getButtonStyle = () => {
+        const baseStyle = [styles.button, styles[size]];
+
+        if (variant === 'primary') {
+            baseStyle.push(styles.primaryButton);
+        } else if (variant === 'outline') {
+            baseStyle.push(styles.outlineButton);
+        } else if (variant === 'text') {
+            baseStyle.push(styles.textButton);
+        }
+
+        if (disabled) {
+            baseStyle.push(styles.disabled);
+        }
+
+        return baseStyle;
+    };
+
+    const getTextStyle = () => {
+        const baseStyle = [styles.buttonText];
+
+        if (variant === 'primary') {
+            baseStyle.push(styles.primaryText);
+        } else if (variant === 'outline') {
+            baseStyle.push(styles.outlineText);
+        } else if (variant === 'text') {
+            baseStyle.push(styles.textButtonText);
+        }
+
+        return baseStyle;
+    };
+
+    return (
+        <TouchableOpacity
+            style={[...getButtonStyle(), style]}
+            onPress={onPress}
+            disabled={disabled || loading}
+            activeOpacity={0.7}
+        >
+            {loading ? (
+                <ActivityIndicator
+                    color={variant === 'primary' ? theme.colors.secondary : theme.colors.primary}
+                />
+            ) : (
+                <>
+                    {icon && icon}
+                    <Text style={[...getTextStyle(), textStyle]}>{title}</Text>
+                </>
+            )}
+        </TouchableOpacity>
+    );
+};
+
+const styles = StyleSheet.create({
+    button: {
+        borderRadius: theme.borderRadius.md,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+    },
+
+    // Sizes
+    small: {
+        paddingVertical: theme.spacing.sm,
+        paddingHorizontal: theme.spacing.base,
+        minHeight: 36,
+    },
+    medium: {
+        paddingVertical: theme.spacing.md,
+        paddingHorizontal: theme.spacing.lg,
+        minHeight: 48,
+    },
+    large: {
+        paddingVertical: theme.spacing.base,
+        paddingHorizontal: theme.spacing.xl,
+        minHeight: 56,
+    },
+
+    // Variants
+    primaryButton: {
+        backgroundColor: theme.colors.primary,
+        ...theme.shadows.sm,
+    },
+    outlineButton: {
+        backgroundColor: 'transparent',
+        borderWidth: 1.5,
+        borderColor: theme.colors.primary,
+    },
+    textButton: {
+        backgroundColor: 'transparent',
+    },
+
+    // Text styles
+    buttonText: {
+        fontSize: theme.fontSizes.base,
+        fontFamily: theme.fonts.semiBold,
+    },
+    primaryText: {
+        color: theme.colors.secondary,
+    },
+    outlineText: {
+        color: theme.colors.primary,
+    },
+    textButtonText: {
+        color: theme.colors.primary,
+    },
+
+    // States
+    disabled: {
+        opacity: 0.5,
+    },
+});
+
+export default CustomButton;
