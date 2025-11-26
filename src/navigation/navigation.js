@@ -9,7 +9,7 @@ import theme from '../theme/theme';
 // Screens
 import HomeScreen from '../screens/homescreen';
 import TurfDetailsScreen from '../screens/TurfDetailsScreen';
-// import BookingScreen from '../screens/BookingScreen';
+import BookingScreen from '../screens/BookingScreen';
 import MyBookingsScreen from '../screens/MyBookingsScreen';
 import ProfileScreen from '../screens/profilescreen';
 

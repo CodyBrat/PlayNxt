@@ -10,11 +10,11 @@ const FacilityIcon = ({ facility }) => {
             <View style={styles.iconCircle}>
                 <MaterialCommunityIcons
                     name={facility.icon}
-                    size={24}
+                    size={22}
                     color={theme.colors.primary}
                 />
             </View>
-            <Text style={styles.label}>{facility.name}</Text>
+            <Text style={styles.label} numberOfLines={2}>{facility.name}</Text>
         </View>
     );
 };
@@ -22,21 +22,21 @@ const FacilityIcon = ({ facility }) => {
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
-        width: 80,
+        width: 70,
     },
     iconCircle: {
-        width: 56,
-        height: 56,
-        borderRadius: theme.borderRadius.full,
-        backgroundColor: theme.colors.surface,
+        width: 60,
+        height: 60,
+        borderRadius: theme.borderRadius.lg,
+        backgroundColor: theme.colors.background,
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: theme.spacing.sm,
-        borderWidth: 1,
-        borderColor: theme.colors.border,
+        borderWidth: 1.5,
+        borderColor: theme.colors.primary + '20',
     },
     label: {
-        fontSize: theme.fontSizes.xs,
+        fontSize: 11,
         fontFamily: theme.fonts.medium,
         color: theme.colors.text,
         textAlign: 'center',

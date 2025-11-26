@@ -5,10 +5,10 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  FlatList,
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { useApp } from '../context/AppContext';
 import { sportsCategories } from '../data/mockData';
@@ -43,23 +43,45 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <View style={styles.container}>
+      {/* Header with Gradient */}
+      <LinearGradient
+        colors={[theme.colors.primary, theme.colors.primaryDark]}
+        style={styles.headerGradient}
+      >
+        <SafeAreaView edges={['top']}>
+          <View style={styles.header}>
+            <View>
+              <Text style={styles.greeting}>Hello 👋</Text>
+              <Text style={styles.headerTitle}>Find Your Perfect Turf</Text>
+            </View>
+          </View>
+
+          {/* Search Bar */}
+          <View style={styles.searchSection}>
+            <SearchBar
+              value={state.searchQuery}
+              onChangeText={setSearchQuery}
+              placeholder="Search turfs, locations..."
+            />
+          </View>
+        </SafeAreaView>
+      </LinearGradient>
+
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {/* Search Bar */}
-        <View style={styles.section}>
-          <SearchBar
-            value={state.searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder="Search your favorite turf"
-          />
-        </View>
-
         {/* Sport Categories */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Turf Categories</Text>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Sport Categories</Text>
+            {state.selectedSport && (
+              <TouchableOpacity onPress={() => setSelectedSport(null)}>
+                <Text style={styles.clearText}>Clear</Text>
+              </TouchableOpacity>
+            )}
+          </View>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -79,10 +101,10 @@ export default function HomeScreen() {
         {/* Turfs Near You */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Turfs near you</Text>
-            <TouchableOpacity onPress={() => { }}>
-              <Text style={styles.viewAll}>View All →</Text>
-            </TouchableOpacity>
+            <Text style={styles.sectionTitle}>
+              {state.selectedSport ? `${state.selectedSport} Venues` : 'Venues Near You'}
+            </Text>
+            <Text style={styles.countText}>{filteredVenues.length} found</Text>
           </View>
 
           {filteredVenues.length > 0 ? (
@@ -97,23 +119,25 @@ export default function HomeScreen() {
             ))
           ) : (
             <View style={styles.emptyState}>
+              <Text style={styles.emptyIcon}>🔍</Text>
+              <Text style={styles.emptyTitle}>No venues found</Text>
               <Text style={styles.emptyText}>
-                No turfs found matching your criteria
+                Try adjusting your filters or search query
               </Text>
-              <TouchableOpacity onPress={() => setSelectedSport(null)}>
-                <Text style={styles.clearFilter}>Clear Filters</Text>
+              <TouchableOpacity
+                style={styles.clearButton}
+                onPress={() => {
+                  setSelectedSport(null);
+                  setSearchQuery('');
+                }}
+              >
+                <Text style={styles.clearButtonText}>Clear All Filters</Text>
               </TouchableOpacity>
             </View>
           )}
         </View>
-
-        {/* Explore by Areas */}
-        <View style={[styles.section, styles.exploreSection]}>
-          <Text style={styles.sectionTitle}>Explore by areas</Text>
-          <Text style={styles.comingSoon}>Coming soon...</Text>
-        </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -122,11 +146,34 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.background,
   },
+  headerGradient: {
+    paddingBottom: theme.spacing.xl,
+  },
+  header: {
+    paddingHorizontal: theme.spacing.base,
+    paddingTop: theme.spacing.base,
+  },
+  greeting: {
+    fontSize: theme.fontSizes.base,
+    fontFamily: theme.fonts.regular,
+    color: theme.colors.secondary,
+    marginBottom: 4,
+  },
+  headerTitle: {
+    fontSize: theme.fontSizes['3xl'],
+    fontFamily: theme.fonts.bold,
+    color: theme.colors.secondary,
+  },
+  searchSection: {
+    paddingHorizontal: theme.spacing.base,
+    paddingTop: theme.spacing.lg,
+  },
   scrollContent: {
-    paddingBottom: theme.spacing['2xl'],
+    paddingTop: theme.spacing.base,
+    paddingBottom: theme.spacing['3xl'],
   },
   section: {
-    paddingTop: theme.spacing.base,
+    marginBottom: theme.spacing.xl,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -139,40 +186,52 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSizes.xl,
     fontFamily: theme.fonts.bold,
     color: theme.colors.text,
-    paddingHorizontal: theme.spacing.base,
-    marginBottom: theme.spacing.md,
   },
-  viewAll: {
+  countText: {
     fontSize: theme.fontSizes.sm,
     fontFamily: theme.fonts.medium,
+    color: theme.colors.textSecondary,
+  },
+  clearText: {
+    fontSize: theme.fontSizes.sm,
+    fontFamily: theme.fonts.semiBold,
     color: theme.colors.primary,
   },
   categoriesContainer: {
     paddingHorizontal: theme.spacing.base,
+    gap: theme.spacing.md,
   },
   emptyState: {
     alignItems: 'center',
-    paddingVertical: theme.spacing['3xl'],
+    paddingVertical: theme.spacing['4xl'],
+    paddingHorizontal: theme.spacing.base,
+  },
+  emptyIcon: {
+    fontSize: 64,
+    marginBottom: theme.spacing.base,
+  },
+  emptyTitle: {
+    fontSize: theme.fontSizes.xl,
+    fontFamily: theme.fonts.semiBold,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.sm,
   },
   emptyText: {
     fontSize: theme.fontSizes.base,
     fontFamily: theme.fonts.regular,
     color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.md,
+    textAlign: 'center',
+    marginBottom: theme.spacing.lg,
   },
-  clearFilter: {
+  clearButton: {
+    backgroundColor: theme.colors.primary,
+    paddingHorizontal: theme.spacing.xl,
+    paddingVertical: theme.spacing.md,
+    borderRadius: theme.borderRadius.md,
+  },
+  clearButtonText: {
     fontSize: theme.fontSizes.base,
     fontFamily: theme.fonts.semiBold,
-    color: theme.colors.primary,
-  },
-  exploreSection: {
-    paddingHorizontal: theme.spacing.base,
-    marginTop: theme.spacing.xl,
-  },
-  comingSoon: {
-    fontSize: theme.fontSizes.base,
-    fontFamily: theme.fonts.regular,
-    color: theme.colors.textLight,
-    fontStyle: 'italic',
+    color: theme.colors.secondary,
   },
 });

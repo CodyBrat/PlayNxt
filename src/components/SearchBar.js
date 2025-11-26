@@ -9,8 +9,8 @@ const SearchBar = ({ value, onChangeText, placeholder = 'Search your favorite tu
         <View style={styles.container}>
             <MaterialCommunityIcons
                 name="magnify"
-                size={22}
-                color={theme.colors.primary}
+                size={20}
+                color={theme.colors.textSecondary}
                 style={styles.icon}
             />
             <TextInput
@@ -20,6 +20,15 @@ const SearchBar = ({ value, onChangeText, placeholder = 'Search your favorite tu
                 placeholder={placeholder}
                 placeholderTextColor={theme.colors.textLight}
             />
+            {value.length > 0 && (
+                <MaterialCommunityIcons
+                    name="close-circle"
+                    size={18}
+                    color={theme.colors.textLight}
+                    onPress={() => onChangeText('')}
+                    style={styles.clearIcon}
+                />
+            )}
         </View>
     );
 };
@@ -31,8 +40,8 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.surface,
         borderRadius: theme.borderRadius.lg,
         paddingHorizontal: theme.spacing.base,
-        paddingVertical: theme.spacing.xs,
-        ...theme.shadows.sm,
+        paddingVertical: 4,
+        ...theme.shadows.md,
     },
     icon: {
         marginRight: theme.spacing.sm,
@@ -42,7 +51,10 @@ const styles = StyleSheet.create({
         fontSize: theme.fontSizes.base,
         fontFamily: theme.fonts.regular,
         color: theme.colors.text,
-        paddingVertical: theme.spacing.sm,
+        paddingVertical: theme.spacing.md,
+    },
+    clearIcon: {
+        padding: 4,
     },
 });
 

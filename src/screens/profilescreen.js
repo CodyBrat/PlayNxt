@@ -9,6 +9,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useApp } from '../context/AppContext';
 import theme from '../theme/theme';
@@ -30,6 +31,7 @@ export default function ProfileScreen() {
             id: '1',
             icon: 'account-edit-outline',
             label: 'Edit Profile',
+            color: theme.colors.text,
             onPress: () => { },
         },
         {
@@ -37,22 +39,32 @@ export default function ProfileScreen() {
             icon: 'heart-outline',
             label: 'My Favorites',
             count: state.favorites.length,
+            color: theme.colors.text,
             onPress: () => { },
         },
         {
             id: '3',
-            icon: 'cog-outline',
-            label: 'Settings',
+            icon: 'wallet-outline',
+            label: 'Payment Methods',
+            color: theme.colors.text,
             onPress: () => { },
         },
         {
             id: '4',
-            icon: 'help-circle-outline',
-            label: 'Help & Support',
+            icon: 'cog-outline',
+            label: 'Settings',
+            color: theme.colors.text,
             onPress: () => { },
         },
         {
             id: '5',
+            icon: 'help-circle-outline',
+            label: 'Help & Support',
+            color: theme.colors.text,
+            onPress: () => { },
+        },
+        {
+            id: '6',
             icon: 'logout',
             label: 'Logout',
             color: theme.colors.error,
@@ -61,61 +73,110 @@ export default function ProfileScreen() {
     ];
 
     return (
-        <SafeAreaView style={styles.container} edges={['top']}>
+        <View style={styles.container}>
+            {/* Header with Gradient */}
+            <LinearGradient
+                colors={[theme.colors.primary, theme.colors.primaryDark]}
+                style={styles.headerGradient}
+            >
+                <SafeAreaView edges={['top']}>
+                    <View style={styles.header}>
+                        <Text style={styles.headerTitle}>Profile</Text>
+                        <TouchableOpacity style={styles.editButton}>
+                            <MaterialCommunityIcons
+                                name="pencil-outline"
+                                size={20}
+                                color={theme.colors.secondary}
+                            />
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* Profile Info */}
+                    <View style={styles.profileSection}>
+                        <View style={styles.avatarContainer}>
+                            <Image source={{ uri: user.avatar }} style={styles.avatar} />
+                            <View style={styles.verifiedBadge}>
+                                <MaterialCommunityIcons
+                                    name="check-decagram"
+                                    size={20}
+                                    color={theme.colors.primary}
+                                />
+                            </View>
+                        </View>
+                        <Text style={styles.name}>{user.name}</Text>
+                        <Text style={styles.email}>{user.email}</Text>
+                    </View>
+                </SafeAreaView>
+            </LinearGradient>
+
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.scrollContent}
             >
-                {/* Profile Header */}
-                <View style={styles.header}>
-                    <Image source={{ uri: user.avatar }} style={styles.avatar} />
-                    <Text style={styles.name}>{user.name}</Text>
-                    <Text style={styles.email}>{user.email}</Text>
-                </View>
-
                 {/* Stats */}
                 <View style={styles.statsContainer}>
                     <View style={styles.statCard}>
-                        <MaterialCommunityIcons
-                            name="calendar-check"
-                            size={32}
-                            color={theme.colors.primary}
-                        />
+                        <View style={styles.statIconCircle}>
+                            <MaterialCommunityIcons
+                                name="calendar-check"
+                                size={24}
+                                color={theme.colors.primary}
+                            />
+                        </View>
                         <Text style={styles.statValue}>{user.totalBookings}</Text>
-                        <Text style={styles.statLabel}>Total Bookings</Text>
+                        <Text style={styles.statLabel}>Bookings</Text>
                     </View>
                     <View style={styles.statCard}>
-                        <MaterialCommunityIcons
-                            name="heart"
-                            size={32}
-                            color={theme.colors.error}
-                        />
+                        <View style={styles.statIconCircle}>
+                            <MaterialCommunityIcons
+                                name="heart"
+                                size={24}
+                                color="#FF6B6B"
+                            />
+                        </View>
                         <Text style={styles.statValue}>{state.favorites.length}</Text>
                         <Text style={styles.statLabel}>Favorites</Text>
+                    </View>
+                    <View style={styles.statCard}>
+                        <View style={styles.statIconCircle}>
+                            <MaterialCommunityIcons
+                                name="trophy"
+                                size={24}
+                                color="#FFB800"
+                            />
+                        </View>
+                        <Text style={styles.statValue}>15</Text>
+                        <Text style={styles.statLabel}>Rewards</Text>
                     </View>
                 </View>
 
                 {/* Menu Items */}
                 <View style={styles.menuContainer}>
-                    {menuItems.map((item) => (
+                    <Text style={styles.menuSectionTitle}>Account</Text>
+                    {menuItems.map((item, index) => (
                         <TouchableOpacity
                             key={item.id}
-                            style={styles.menuItem}
+                            style={[
+                                styles.menuItem,
+                                index === menuItems.length - 1 && styles.menuItemLast,
+                            ]}
                             onPress={item.onPress}
                             activeOpacity={0.7}
                         >
                             <View style={styles.menuLeft}>
-                                <MaterialCommunityIcons
-                                    name={item.icon}
-                                    size={24}
-                                    color={item.color || theme.colors.text}
-                                />
-                                <Text
+                                <View
                                     style={[
-                                        styles.menuLabel,
-                                        item.color && { color: item.color },
+                                        styles.menuIconCircle,
+                                        item.color === theme.colors.error && styles.menuIconCircleError,
                                     ]}
                                 >
+                                    <MaterialCommunityIcons
+                                        name={item.icon}
+                                        size={20}
+                                        color={item.color}
+                                    />
+                                </View>
+                                <Text style={[styles.menuLabel, { color: item.color }]}>
                                     {item.label}
                                 </Text>
                             </View>
@@ -127,7 +188,7 @@ export default function ProfileScreen() {
                                 )}
                                 <MaterialCommunityIcons
                                     name="chevron-right"
-                                    size={24}
+                                    size={20}
                                     color={theme.colors.textLight}
                                 />
                             </View>
@@ -136,9 +197,10 @@ export default function ProfileScreen() {
                 </View>
 
                 {/* App Version */}
-                <Text style={styles.version}>Version 1.0.0</Text>
+                <Text style={styles.version}>PlayNxt v1.0.0</Text>
+                <Text style={styles.copyright}>© 2025 PlayNxt. All rights reserved.</Text>
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 }
 
@@ -147,38 +209,75 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: theme.colors.background,
     },
-    scrollContent: {
+    headerGradient: {
         paddingBottom: theme.spacing['2xl'],
     },
     header: {
-        backgroundColor: theme.colors.surface,
+        flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: theme.spacing['2xl'],
-        marginBottom: theme.spacing.base,
+        justifyContent: 'space-between',
+        paddingHorizontal: theme.spacing.base,
+        paddingTop: theme.spacing.base,
+        marginBottom: theme.spacing.lg,
+    },
+    headerTitle: {
+        fontSize: theme.fontSizes['2xl'],
+        fontFamily: theme.fonts.bold,
+        color: theme.colors.secondary,
+    },
+    editButton: {
+        width: 40,
+        height: 40,
+        borderRadius: theme.borderRadius.md,
+        backgroundColor: 'rgba(26, 29, 41, 0.2)',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    profileSection: {
+        alignItems: 'center',
+        paddingHorizontal: theme.spacing.base,
+    },
+    avatarContainer: {
+        position: 'relative',
+        marginBottom: theme.spacing.md,
     },
     avatar: {
         width: 100,
         height: 100,
         borderRadius: theme.borderRadius.full,
-        marginBottom: theme.spacing.base,
-        backgroundColor: theme.colors.primary,
+        backgroundColor: theme.colors.surface,
+        borderWidth: 4,
+        borderColor: theme.colors.secondary,
+    },
+    verifiedBadge: {
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        backgroundColor: theme.colors.surface,
+        borderRadius: theme.borderRadius.full,
+        padding: 2,
     },
     name: {
         fontSize: theme.fontSizes['2xl'],
         fontFamily: theme.fonts.bold,
-        color: theme.colors.text,
-        marginBottom: theme.spacing.xs,
+        color: theme.colors.secondary,
+        marginBottom: 4,
     },
     email: {
         fontSize: theme.fontSizes.base,
         fontFamily: theme.fonts.regular,
-        color: theme.colors.textSecondary,
+        color: theme.colors.secondary,
+        opacity: 0.8,
+    },
+    scrollContent: {
+        paddingBottom: theme.spacing['3xl'],
     },
     statsContainer: {
         flexDirection: 'row',
-        gap: theme.spacing.base,
+        gap: theme.spacing.md,
         paddingHorizontal: theme.spacing.base,
-        marginBottom: theme.spacing.base,
+        marginTop: theme.spacing.base,
+        marginBottom: theme.spacing.xl,
     },
     statCard: {
         flex: 1,
@@ -188,43 +287,71 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         ...theme.shadows.sm,
     },
+    statIconCircle: {
+        width: 48,
+        height: 48,
+        borderRadius: theme.borderRadius.full,
+        backgroundColor: theme.colors.background,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: theme.spacing.sm,
+    },
     statValue: {
         fontSize: theme.fontSizes['2xl'],
         fontFamily: theme.fonts.bold,
         color: theme.colors.text,
-        marginTop: theme.spacing.sm,
+        marginBottom: 4,
     },
     statLabel: {
-        fontSize: theme.fontSizes.sm,
-        fontFamily: theme.fonts.regular,
+        fontSize: theme.fontSizes.xs,
+        fontFamily: theme.fonts.medium,
         color: theme.colors.textSecondary,
-        marginTop: theme.spacing.xs,
     },
     menuContainer: {
         backgroundColor: theme.colors.surface,
         marginHorizontal: theme.spacing.base,
         borderRadius: theme.borderRadius.lg,
-        overflow: 'hidden',
+        padding: theme.spacing.sm,
         ...theme.shadows.sm,
+    },
+    menuSectionTitle: {
+        fontSize: theme.fontSizes.base,
+        fontFamily: theme.fonts.semiBold,
+        color: theme.colors.textSecondary,
+        paddingHorizontal: theme.spacing.md,
+        paddingVertical: theme.spacing.sm,
     },
     menuItem: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: theme.spacing.base,
-        paddingHorizontal: theme.spacing.base,
-        borderBottomWidth: 1,
-        borderBottomColor: theme.colors.divider,
+        paddingVertical: theme.spacing.md,
+        paddingHorizontal: theme.spacing.md,
+        borderRadius: theme.borderRadius.md,
+        marginBottom: 4,
+    },
+    menuItemLast: {
+        marginBottom: 0,
     },
     menuLeft: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: theme.spacing.md,
     },
+    menuIconCircle: {
+        width: 44,
+        height: 44,
+        borderRadius: theme.borderRadius.md,
+        backgroundColor: theme.colors.background,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    menuIconCircleError: {
+        backgroundColor: theme.colors.error + '15',
+    },
     menuLabel: {
         fontSize: theme.fontSizes.base,
         fontFamily: theme.fonts.medium,
-        color: theme.colors.text,
     },
     menuRight: {
         flexDirection: 'row',
@@ -234,21 +361,28 @@ const styles = StyleSheet.create({
     badge: {
         backgroundColor: theme.colors.primary,
         paddingHorizontal: theme.spacing.sm,
-        paddingVertical: 2,
+        paddingVertical: 3,
         borderRadius: theme.borderRadius.full,
         minWidth: 24,
         alignItems: 'center',
     },
     badgeText: {
-        fontSize: theme.fontSizes.xs,
+        fontSize: 11,
         fontFamily: theme.fonts.semiBold,
         color: theme.colors.secondary,
     },
     version: {
         fontSize: theme.fontSizes.sm,
+        fontFamily: theme.fonts.medium,
+        color: theme.colors.textLight,
+        textAlign: 'center',
+        marginTop: theme.spacing['2xl'],
+    },
+    copyright: {
+        fontSize: theme.fontSizes.xs,
         fontFamily: theme.fonts.regular,
         color: theme.colors.textLight,
         textAlign: 'center',
-        marginTop: theme.spacing.xl,
+        marginTop: theme.spacing.xs,
     },
 });
