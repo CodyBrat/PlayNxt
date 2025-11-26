@@ -9,9 +9,10 @@ import theme from '../theme/theme';
 // Screens
 import HomeScreen from '../screens/HomeScreen';
 import TurfDetailsScreen from '../screens/TurfDetailsScreen';
-import BookingScreen from '../screens/BookingScreen';
+
 import MyBookingsScreen from '../screens/MyBookingsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import BookingScreen from '../screens/bookingscreen.js'
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
