@@ -7,11 +7,11 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import theme from '../theme/theme';
 
 // Screens
-import HomeScreen from '../screens/homescreen';
+import HomeScreen from '../screens/HomeScreen';
 import TurfDetailsScreen from '../screens/TurfDetailsScreen';
 import BookingScreen from '../screens/BookingScreen';
 import MyBookingsScreen from '../screens/MyBookingsScreen';
-import ProfileScreen from '../screens/profilescreen';
+import ProfileScreen from '../screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -53,7 +53,7 @@ function TabNavigator() {
         },
         tabBarLabelStyle: {
           fontSize: 12,
-          fontFamily: theme.fonts.medium,
+          fontWeight: '600',
           marginTop: 4,
         },
       }}
