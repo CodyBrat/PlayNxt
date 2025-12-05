@@ -4,18 +4,35 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { ActivityIndicator, View } from 'react-native';
+import { useAuth } from '../context/AuthContext';
 import theme from '../theme/theme';
 
 // Screens
 import HomeScreen from '../screens/HomeScreen';
 import TurfDetailsScreen from '../screens/TurfDetailsScreen';
-
+import BookingScreen from '../screens/BookingScreen';
 import MyBookingsScreen from '../screens/MyBookingsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import BookingScreen from '../screens/bookingscreen.js'
+import LoginScreen from '../screens/LoginScreen';
+import SignupScreen from '../screens/SignupScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+
+// Auth Stack Navigator
+function AuthStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Signup" component={SignupScreen} />
+    </Stack.Navigator>
+  );
+}
 
 // Home Stack Navigator
 function HomeStack() {
@@ -92,9 +109,19 @@ function TabNavigator() {
 }
 
 export default function Navigation() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background }}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
+
   return (
     <NavigationContainer>
-      <TabNavigator />
+      {isAuthenticated ? <TabNavigator /> : <AuthStack />}
     </NavigationContainer>
   );
 }

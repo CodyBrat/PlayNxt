@@ -1,4 +1,4 @@
-// src/screens/profilescreen.js
+// src/screens/ProfileScreen.js
 import React from 'react';
 import {
     View,
@@ -7,16 +7,19 @@ import {
     ScrollView,
     Image,
     TouchableOpacity,
+    Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useAuth } from '../context/AuthContext';
 import { useApp } from '../context/AppContext';
 import theme from '../theme/theme';
 
 export default function ProfileScreen() {
+    const { user: authUser, logout } = useAuth();
     const { state } = useApp();
-    const user = state.user;
+    const user = authUser || state.user;
 
     if (!user) {
         return (
@@ -25,6 +28,21 @@ export default function ProfileScreen() {
             </SafeAreaView>
         );
     }
+
+    const handleLogout = () => {
+        Alert.alert(
+            'Logout',
+            'Are you sure you want to logout?',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Logout',
+                    style: 'destructive',
+                    onPress: () => logout()
+                },
+            ]
+        );
+    };
 
     const menuItems = [
         {
@@ -68,7 +86,7 @@ export default function ProfileScreen() {
             icon: 'logout',
             label: 'Logout',
             color: theme.colors.error,
-            onPress: () => { },
+            onPress: handleLogout,
         },
     ];
 

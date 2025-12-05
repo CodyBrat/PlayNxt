@@ -15,6 +15,7 @@ import {
   Poppins_700Bold,
 } from '@expo-google-fonts/poppins';
 
+import { AuthProvider } from './src/context/AuthContext';
 import { AppProvider } from './src/context/AppContext';
 import Navigation from './src/navigation/navigation';
 import theme from './src/theme/theme';
@@ -40,9 +41,11 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <AppProvider>
-        <Navigation />
-      </AppProvider>
+      <AuthProvider>
+        <AppProvider>
+          <Navigation />
+        </AppProvider>
+      </AuthProvider>
     </SafeAreaProvider>
   );
 }

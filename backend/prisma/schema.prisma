@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,15 +8,18 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
-  email         String   @unique
-  phone         String?
-  avatar        String?
-  totalBookings Int      @default(0)
-  joinedDate    DateTime @default(now())
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  email           String    @unique
+  password        String
+  phone           String?
+  avatar          String?
+  totalBookings   Int       @default(0)
+  isEmailVerified Boolean   @default(false)
+  lastLogin       DateTime?
+  joinedDate      DateTime  @default(now())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   bookings         Booking[]
   reviews          Review[]
@@ -26,19 +28,20 @@ model User {
 
   @@map("users")
 }
+
 model Venue {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   name          String
   location      String
   shortLocation String
   sport         String
-  type          String 
-  price         Int 
-  priceUnit     String 
+  type          String
+  price         Int
+  priceUnit     String
   rating        Float    @default(0)
   reviewCount   Int      @default(0)
-  image         String 
-  images        String[] 
+  image         String
+  images        String[]
   about         String
   openHours     String   @default("6:00 AM - 11:00 PM")
   contactPhone  String?
@@ -47,9 +50,9 @@ model Venue {
 
   availableSlots Json @default("{}")
 
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
   bookings       Booking[]
   reviews        Review[]
   favoritedBy    User[]    @relation("UserFavorites", fields: [favoritedByIds], references: [id])
@@ -60,15 +63,10 @@ model Venue {
   @@map("venues")
 }
 
-
-
-
 type Facility {
   name String
   icon String
 }
-
-
 
 model Booking {
   id String @id @default(auto()) @map("_id") @db.ObjectId
@@ -82,16 +80,16 @@ model Booking {
   venueName  String
   venueImage String
 
-  date     DateTime 
-  time     String 
-  duration String 
-  price    Int 
+  date     DateTime
+  time     String
+  duration String
+  price    Int
 
-  status BookingStatus @default(CONFIRMED)
-  bookingDate DateTime  @default(now()) 
+  status      BookingStatus @default(CONFIRMED)
+  bookingDate DateTime      @default(now())
   cancelledAt DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
   @@index([userId, status])
   @@index([venueId, date])
@@ -108,9 +106,9 @@ enum BookingStatus {
 model SportCategory {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String   @unique
-  icon      String 
+  icon      String
   trending  Boolean  @default(false)
-  order     Int      @default(0) 
+  order     Int      @default(0)
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -128,7 +126,7 @@ model Review {
   venueId String @db.ObjectId
   venue   Venue  @relation(fields: [venueId], references: [id], onDelete: Cascade)
 
-  rating  Float 
+  rating  Float
   comment String?
 
   createdAt DateTime @default(now())
