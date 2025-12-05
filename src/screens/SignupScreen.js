@@ -26,6 +26,7 @@ export default function SignupScreen({ navigation }) {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [role, setRole] = useState('USER'); // USER or PROVIDER
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSignup = async () => {
@@ -50,6 +51,7 @@ export default function SignupScreen({ navigation }) {
             email: email.trim().toLowerCase(),
             phone: phone.trim() || undefined,
             password,
+            role, // Include role in registration
         });
         setIsLoading(false);
 
@@ -87,6 +89,41 @@ export default function SignupScreen({ navigation }) {
                         <Text style={styles.subtitle}>
                             Sign up to start booking amazing turfs
                         </Text>
+
+                        {/* Role Selection */}
+                        <View style={styles.roleContainer}>
+                            <Text style={styles.roleLabel}>I am a:</Text>
+                            <View style={styles.roleButtons}>
+                                <TouchableOpacity
+                                    style={[styles.roleButton, role === 'USER' && styles.roleButtonActive]}
+                                    onPress={() => setRole('USER')}
+                                    activeOpacity={0.7}
+                                >
+                                    <MaterialCommunityIcons
+                                        name="account"
+                                        size={20}
+                                        color={role === 'USER' ? theme.colors.secondary : theme.colors.textSecondary}
+                                    />
+                                    <Text style={[styles.roleButtonText, role === 'USER' && styles.roleButtonTextActive]}>
+                                        Customer
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.roleButton, role === 'PROVIDER' && styles.roleButtonActive]}
+                                    onPress={() => setRole('PROVIDER')}
+                                    activeOpacity={0.7}
+                                >
+                                    <MaterialCommunityIcons
+                                        name="store"
+                                        size={20}
+                                        color={role === 'PROVIDER' ? theme.colors.secondary : theme.colors.textSecondary}
+                                    />
+                                    <Text style={[styles.roleButtonText, role === 'PROVIDER' && styles.roleButtonTextActive]}>
+                                        Turf Owner
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
 
                         {/* Name Input */}
                         <View style={styles.inputContainer}>
@@ -345,5 +382,43 @@ const styles = StyleSheet.create({
         fontSize: theme.fontSizes.base,
         fontFamily: theme.fonts.semiBold,
         color: theme.colors.primary,
+    },
+    roleContainer: {
+        marginBottom: theme.spacing.xl,
+    },
+    roleLabel: {
+        fontSize: theme.fontSizes.base,
+        fontFamily: theme.fonts.semiBold,
+        color: theme.colors.text,
+        marginBottom: theme.spacing.md,
+    },
+    roleButtons: {
+        flexDirection: 'row',
+        gap: theme.spacing.md,
+    },
+    roleButton: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: theme.spacing.sm,
+        paddingVertical: theme.spacing.base,
+        borderRadius: theme.borderRadius.lg,
+        backgroundColor: theme.colors.surface,
+        borderWidth: 2,
+        borderColor: 'transparent',
+        ...theme.shadows.sm,
+    },
+    roleButtonActive: {
+        backgroundColor: theme.colors.primary,
+        borderColor: theme.colors.primary,
+    },
+    roleButtonText: {
+        fontSize: theme.fontSizes.base,
+        fontFamily: theme.fonts.semiBold,
+        color: theme.colors.textSecondary,
+    },
+    roleButtonTextActive: {
+        color: theme.colors.secondary,
     },
 });

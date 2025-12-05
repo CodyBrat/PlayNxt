@@ -7,6 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  USER
+  PROVIDER
+  ADMIN
+}
+
 model User {
   id              String    @id @default(auto()) @map("_id") @db.ObjectId
   name            String
@@ -14,6 +20,7 @@ model User {
   password        String
   phone           String?
   avatar          String?
+  role            UserRole  @default(USER)
   totalBookings   Int       @default(0)
   isEmailVerified Boolean   @default(false)
   lastLogin       DateTime?
@@ -23,6 +30,7 @@ model User {
 
   bookings         Booking[]
   reviews          Review[]
+  ownedVenues      Venue[]   @relation("VenueOwner")
   favoriteVenues   Venue[]   @relation("UserFavorites", fields: [favoriteVenueIds], references: [id])
   favoriteVenueIds String[]  @db.ObjectId
 
@@ -45,6 +53,9 @@ model Venue {
   about         String
   openHours     String   @default("6:00 AM - 11:00 PM")
   contactPhone  String?
+
+  ownerId String @db.ObjectId
+  owner   User   @relation("VenueOwner", fields: [ownerId], references: [id])
 
   facilities Facility[]
 

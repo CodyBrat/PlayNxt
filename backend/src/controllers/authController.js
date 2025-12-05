@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 // Register new user
 export const register = async (req, res) => {
     try {
-        const { name, email, password, phone } = req.body;
+        const { name, email, password, phone, role } = req.body;
 
         // Validation
         if (!name || !email || !password) {
@@ -37,6 +37,7 @@ export const register = async (req, res) => {
                 email,
                 password: hashedPassword,
                 phone: phone || null,
+                role: role || 'USER', // Default to USER if not specified
                 avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=B8FF3C&color=1A1D29&size=200`,
             },
             select: {
@@ -45,6 +46,7 @@ export const register = async (req, res) => {
                 email: true,
                 phone: true,
                 avatar: true,
+                role: true,
                 totalBookings: true,
                 isEmailVerified: true,
                 joinedDate: true,

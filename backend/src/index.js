@@ -2,6 +2,8 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import authRoutes from './routes/auth.js';
+import venueRoutes from './routes/venue.js';
+import bookingRoutes from './routes/booking.js';
 
 dotenv.config();
 
@@ -24,6 +26,8 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/venues', venueRoutes);
+app.use('/api/bookings', bookingRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

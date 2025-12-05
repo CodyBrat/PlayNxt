@@ -30,6 +30,7 @@ export const authenticate = async (req, res, next) => {
                 email: true,
                 phone: true,
                 avatar: true,
+                role: true,
                 totalBookings: true,
                 isEmailVerified: true,
                 joinedDate: true,

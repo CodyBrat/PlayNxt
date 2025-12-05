@@ -62,10 +62,22 @@ export const authAPI = {
     getCurrentUser: () => api.get('/auth/me'),
 };
 
-// Venue endpoints (for future use)
+// Venue endpoints
 export const venueAPI = {
     getAll: () => api.get('/venues'),
     getById: (id) => api.get(`/venues/${id}`),
+    createVenue: (data) => api.post('/venues', data),
+    updateVenue: (id, data) => api.put(`/venues/${id}`, data),
+    deleteVenue: (id) => api.delete(`/venues/${id}`),
+    getMyVenues: () => api.get('/venues/my-venues/list'),
+    getVenueBookings: (id) => api.get(`/venues/${id}/bookings`),
+};
+
+// Booking endpoints
+export const bookingAPI = {
+    createBooking: (data) => api.post('/bookings', data),
+    getMyBookings: () => api.get('/bookings/my-bookings'),
+    cancelBooking: (id) => api.put(`/bookings/${id}/cancel`),
 };
 
 export default api;
