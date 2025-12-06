@@ -3,49 +3,26 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { ActivityIndicator, View } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import theme from '../theme/theme';
 
+import LoginScreen from '../screens/LoginScreen';
+import SignupScreen from '../screens/SignupScreen';
 import HomeScreen from '../screens/HomeScreen';
 import TurfDetailsScreen from '../screens/TurfDetailsScreen';
 import BookingScreen from '../screens/BookingScreen';
 import MyBookingsScreen from '../screens/MyBookingsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import LoginScreen from '../screens/LoginScreen';
-import SignupScreen from '../screens/SignupScreen';
 
-const Tab = createBottomTabNavigator();
+import ProviderDashboardScreen from '../screens/ProviderDashboardScreen';
+import CreateVenueScreen from '../screens/CreateVenueScreen';
+import MyVenuesScreen from '../screens/MyVenuesScreen';
+import VenueBookingsScreen from '../screens/VenueBookingsScreen';
+
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
-function AuthStack() {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Signup" component={SignupScreen} />
-    </Stack.Navigator>
-  );
-}
-
-function HomeStack() {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="HomeMain" component={HomeScreen} />
-      <Stack.Screen name="TurfDetails" component={TurfDetailsScreen} />
-      <Stack.Screen name="Booking" component={BookingScreen} />
-    </Stack.Navigator>
-  );
-}
-
-function TabNavigator() {
+function CustomerTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -54,29 +31,22 @@ function TabNavigator() {
         tabBarInactiveTintColor: theme.colors.textLight,
         tabBarStyle: {
           backgroundColor: theme.colors.surface,
-          borderTopWidth: 0,
-          elevation: 8,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 8,
-          paddingTop: 8,
+          borderTopColor: theme.colors.border,
+          height: 60,
           paddingBottom: 8,
-          height: 65,
         },
         tabBarLabelStyle: {
+          fontFamily: theme.fonts.medium,
           fontSize: 12,
-          fontWeight: '600',
-          marginTop: 4,
         },
       }}
     >
       <Tab.Screen
         name="Home"
-        component={HomeStack}
+        component={HomeScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="soccer-field" color={color} size={size} />
+            <MaterialCommunityIcons name="home" size={size} color={color} />
           ),
         }}
       />
@@ -86,7 +56,7 @@ function TabNavigator() {
         options={{
           tabBarLabel: 'Bookings',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="calendar-check" color={color} size={size} />
+            <MaterialCommunityIcons name="calendar-check" size={size} color={color} />
           ),
         }}
       />
@@ -95,7 +65,58 @@ function TabNavigator() {
         component={ProfileScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account-circle" color={color} size={size} />
+            <MaterialCommunityIcons name="account" size={size} color={color} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+}
+
+function ProviderTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.textLight,
+        tabBarStyle: {
+          backgroundColor: theme.colors.surface,
+          borderTopColor: theme.colors.border,
+          height: 60,
+          paddingBottom: 8,
+        },
+        tabBarLabelStyle: {
+          fontFamily: theme.fonts.medium,
+          fontSize: 12,
+        },
+      }}
+    >
+      <Tab.Screen
+        name="Dashboard"
+        component={ProviderDashboardScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="view-dashboard" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="MyVenues"
+        component={MyVenuesScreen}
+        options={{
+          tabBarLabel: 'My Venues',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="store" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="account" size={size} color={color} />
           ),
         }}
       />
@@ -104,19 +125,40 @@ function TabNavigator() {
 }
 
 export default function Navigation() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
 
   if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background }}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View>
-    );
+    return null;
   }
+
+  const isProvider = user?.role === 'PROVIDER';
 
   return (
     <NavigationContainer>
-      {isAuthenticated ? <TabNavigator /> : <AuthStack />}
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {!isAuthenticated ? (
+          <>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Signup" component={SignupScreen} />
+          </>
+        ) : (
+          <>
+            {isProvider ? (
+              <>
+                <Stack.Screen name="MainTabs" component={ProviderTabs} />
+                <Stack.Screen name="CreateVenue" component={CreateVenueScreen} />
+                <Stack.Screen name="VenueBookings" component={VenueBookingsScreen} />
+              </>
+            ) : (
+              <>
+                <Stack.Screen name="MainTabs" component={CustomerTabs} />
+                <Stack.Screen name="TurfDetails" component={TurfDetailsScreen} />
+                <Stack.Screen name="Booking" component={BookingScreen} />
+              </>
+            )}
+          </>
+        )}
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }

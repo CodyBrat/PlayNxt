@@ -4,6 +4,12 @@ const prisma = new PrismaClient();
 
 export const createBooking = async (req, res) => {
     try {
+        if (req.user.role === 'PROVIDER') {
+            return res.status(403).json({
+                error: 'Providers cannot book venues. You can create and manage your own venues instead.'
+            });
+        }
+
         const {
             venueId,
             venueName,
@@ -14,11 +20,11 @@ export const createBooking = async (req, res) => {
             price,
         } = req.body;
 
-        
-        if (!venueId || !date || !time) {
+
+        if (!venueId || !date || !time || !price) {
             return res.status(400).json({
                 error: 'Missing required fields',
-                required: ['venueId', 'date', 'time']
+                required: ['venueId', 'date', 'time', 'price']
             });
         }
 
@@ -36,7 +42,7 @@ export const createBooking = async (req, res) => {
             },
         });
 
-        
+
         await prisma.user.update({
             where: { id: req.user.id },
             data: { totalBookings: { increment: 1 } },
@@ -80,7 +86,7 @@ export const cancelBooking = async (req, res) => {
     try {
         const { id } = req.params;
 
-        
+
         const booking = await prisma.booking.findUnique({
             where: { id },
         });
