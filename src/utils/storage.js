@@ -3,7 +3,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const TOKEN_KEY = '@playnxt_token';
 const USER_KEY = '@playnxt_user';
 
-// Token storage
 export const saveToken = async (token) => {
     try {
         await AsyncStorage.setItem(TOKEN_KEY, token);
@@ -29,7 +28,6 @@ export const removeToken = async () => {
     }
 };
 
-// User storage
 export const saveUser = async (user) => {
     try {
         await AsyncStorage.setItem(USER_KEY, JSON.stringify(user));
@@ -56,7 +54,6 @@ export const removeUser = async () => {
     }
 };
 
-// Clear all auth data
 export const clearAuthData = async () => {
     await removeToken();
     await removeUser();

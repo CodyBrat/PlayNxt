@@ -1,4 +1,3 @@
-// src/components/SportCategoryCard.js
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';

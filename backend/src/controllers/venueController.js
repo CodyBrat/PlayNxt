@@ -2,7 +2,6 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-// Get all active venues (public)
 export const getAllVenues = async (req, res) => {
     try {
         const venues = await prisma.venue.findMany({
@@ -26,7 +25,6 @@ export const getAllVenues = async (req, res) => {
     }
 };
 
-// Get venue by ID (public)
 export const getVenueById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -55,7 +53,6 @@ export const getVenueById = async (req, res) => {
     }
 };
 
-// Get provider's venues (provider only)
 export const getMyVenues = async (req, res) => {
     try {
         const venues = await prisma.venue.findMany({
@@ -70,7 +67,6 @@ export const getMyVenues = async (req, res) => {
     }
 };
 
-// Create venue (provider only)
 export const createVenue = async (req, res) => {
     try {
         const {
@@ -90,7 +86,7 @@ export const createVenue = async (req, res) => {
             contactPhone,
         } = req.body;
 
-        // Validation
+        
         if (!name || !location || !sport || !price) {
             return res.status(400).json({
                 error: 'Missing required fields',
@@ -107,7 +103,7 @@ export const createVenue = async (req, res) => {
                 type: type || 'Standard',
                 price,
                 priceUnit: priceUnit || '60 minutes',
-                image: image || 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=800',
+                image: image || 'https:
                 images: images || [],
                 about: about || 'A great venue for sports activities.',
                 facilities: facilities || [],
@@ -128,12 +124,11 @@ export const createVenue = async (req, res) => {
     }
 };
 
-// Update venue (owner only)
 export const updateVenue = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Check ownership
+        
         const venue = await prisma.venue.findUnique({
             where: { id },
         });
@@ -146,7 +141,7 @@ export const updateVenue = async (req, res) => {
             return res.status(403).json({ error: 'You can only update your own venues' });
         }
 
-        // Update venue
+        
         const updatedVenue = await prisma.venue.update({
             where: { id },
             data: req.body,
@@ -162,12 +157,11 @@ export const updateVenue = async (req, res) => {
     }
 };
 
-// Delete venue (owner only)
 export const deleteVenue = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Check ownership
+        
         const venue = await prisma.venue.findUnique({
             where: { id },
         });
@@ -191,12 +185,11 @@ export const deleteVenue = async (req, res) => {
     }
 };
 
-// Get bookings for a venue (owner only)
 export const getVenueBookings = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Check ownership
+        
         const venue = await prisma.venue.findUnique({
             where: { id },
         });

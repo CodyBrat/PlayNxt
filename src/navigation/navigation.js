@@ -1,4 +1,3 @@
-// src/navigation/navigation.js
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -8,7 +7,6 @@ import { ActivityIndicator, View } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import theme from '../theme/theme';
 
-// Screens
 import HomeScreen from '../screens/HomeScreen';
 import TurfDetailsScreen from '../screens/TurfDetailsScreen';
 import BookingScreen from '../screens/BookingScreen';
@@ -20,7 +18,6 @@ import SignupScreen from '../screens/SignupScreen';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-// Auth Stack Navigator
 function AuthStack() {
   return (
     <Stack.Navigator
@@ -34,7 +31,6 @@ function AuthStack() {
   );
 }
 
-// Home Stack Navigator
 function HomeStack() {
   return (
     <Stack.Navigator
@@ -49,7 +45,6 @@ function HomeStack() {
   );
 }
 
-// Main Tab Navigator
 function TabNavigator() {
   return (
     <Tab.Navigator

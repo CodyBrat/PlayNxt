@@ -1,35 +1,73 @@
-// src/context/AppContext.js
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { appReducer, initialState, actionTypes } from './appReducer';
-import { venues as mockVenues, userBookings, userData } from '../data/mockData';
+import { venueAPI, bookingAPI } from '../services/api';
+import { useAuth } from './AuthContext';
 
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
     const [state, dispatch] = useReducer(appReducer, initialState);
+    const { user, isAuthenticated } = useAuth();
 
-    // Initialize app data
+    
     useEffect(() => {
-        // Simulate loading data
-        dispatch({ type: actionTypes.SET_USER, payload: userData });
-        dispatch({ type: actionTypes.SET_VENUES, payload: mockVenues });
-        dispatch({ type: actionTypes.SET_BOOKINGS, payload: userBookings });
+        loadVenues();
     }, []);
 
-    // Helper functions
-    const addBooking = (booking) => {
-        const newBooking = {
-            ...booking,
-            id: `b${Date.now()}`,
-            bookingDate: new Date().toISOString().split('T')[0],
-            status: 'confirmed',
-        };
-        dispatch({ type: actionTypes.ADD_BOOKING, payload: newBooking });
-        return newBooking;
+    
+    useEffect(() => {
+        if (isAuthenticated && user) {
+            loadBookings();
+        }
+    }, [isAuthenticated, user]);
+
+    const loadVenues = async () => {
+        try {
+            dispatch({ type: actionTypes.SET_LOADING, payload: true });
+            const response = await venueAPI.getAll();
+            dispatch({ type: actionTypes.SET_VENUES, payload: response.data.venues });
+        } catch (error) {
+            console.error('Failed to load venues:', error);
+            dispatch({ type: actionTypes.SET_ERROR, payload: 'Failed to load venues' });
+        } finally {
+            dispatch({ type: actionTypes.SET_LOADING, payload: false });
+        }
     };
 
-    const cancelBooking = (bookingId) => {
-        dispatch({ type: actionTypes.CANCEL_BOOKING, payload: bookingId });
+    const loadBookings = async () => {
+        try {
+            const response = await bookingAPI.getMyBookings();
+            dispatch({ type: actionTypes.SET_BOOKINGS, payload: response.data.bookings });
+        } catch (error) {
+            console.error('Failed to load bookings:', error);
+        }
+    };
+
+    
+    const addBooking = async (bookingData) => {
+        try {
+            const response = await bookingAPI.createBooking(bookingData);
+            const newBooking = response.data.booking;
+            dispatch({ type: actionTypes.ADD_BOOKING, payload: newBooking });
+            return { success: true, booking: newBooking };
+        } catch (error) {
+            console.error('Failed to create booking:', error);
+            const message = error.response?.data?.error || 'Failed to create booking';
+            return { success: false, error: message };
+        }
+    };
+
+    
+    const cancelBooking = async (bookingId) => {
+        try {
+            await bookingAPI.cancelBooking(bookingId);
+            dispatch({ type: actionTypes.CANCEL_BOOKING, payload: bookingId });
+            return { success: true };
+        } catch (error) {
+            console.error('Failed to cancel booking:', error);
+            const message = error.response?.data?.error || 'Failed to cancel booking';
+            return { success: false, error: message };
+        }
     };
 
     const toggleFavorite = (venueId) => {
@@ -52,16 +90,16 @@ export const AppProvider = ({ children }) => {
         dispatch({ type: actionTypes.RESET_FILTERS });
     };
 
-    // Computed values
+    
     const getFilteredVenues = () => {
         let filtered = state.venues;
 
-        // Filter by sport
+        
         if (state.selectedSport) {
             filtered = filtered.filter(venue => venue.sport === state.selectedSport);
         }
 
-        // Filter by search query
+        
         if (state.searchQuery) {
             const query = state.searchQuery.toLowerCase();
             filtered = filtered.filter(
@@ -72,14 +110,14 @@ export const AppProvider = ({ children }) => {
             );
         }
 
-        // Filter by price range
+        
         filtered = filtered.filter(
             venue =>
                 venue.price >= state.filters.minPrice &&
                 venue.price <= state.filters.maxPrice
         );
 
-        // Filter by rating
+        
         if (state.filters.rating > 0) {
             filtered = filtered.filter(venue => venue.rating >= state.filters.rating);
         }
@@ -95,7 +133,8 @@ export const AppProvider = ({ children }) => {
         return state.bookings.filter(booking => {
             const bookingDate = new Date(booking.date);
             const today = new Date();
-            return booking.status === 'confirmed' && bookingDate >= today;
+            today.setHours(0, 0, 0, 0);
+            return booking.status !== 'CANCELLED' && bookingDate >= today;
         });
     };
 
@@ -103,8 +142,13 @@ export const AppProvider = ({ children }) => {
         return state.bookings.filter(booking => {
             const bookingDate = new Date(booking.date);
             const today = new Date();
-            return booking.status === 'confirmed' && bookingDate < today;
+            today.setHours(0, 0, 0, 0);
+            return booking.status !== 'CANCELLED' && bookingDate < today;
         });
+    };
+
+    const getCancelledBookings = () => {
+        return state.bookings.filter(booking => booking.status === 'CANCELLED');
     };
 
     const value = {
@@ -121,6 +165,9 @@ export const AppProvider = ({ children }) => {
         isFavorite,
         getActiveBookings,
         getPastBookings,
+        getCancelledBookings,
+        loadVenues,
+        loadBookings,
     };
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

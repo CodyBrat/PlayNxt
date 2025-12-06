@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Load user on app start
+    
     useEffect(() => {
         loadUser();
     }, []);
@@ -23,13 +23,13 @@ export const AuthProvider = ({ children }) => {
                 setUser(cachedUser);
                 setIsAuthenticated(true);
 
-                // Optionally verify token with backend
+                
                 try {
                     const response = await authAPI.getCurrentUser();
                     setUser(response.data.user);
                     await saveUser(response.data.user);
                 } catch (error) {
-                    // Token invalid, clear data
+                    
                     await clearAuthData();
                     setUser(null);
                     setIsAuthenticated(false);

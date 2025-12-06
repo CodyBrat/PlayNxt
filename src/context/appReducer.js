@@ -1,4 +1,3 @@
-// src/context/appReducer.js
 
 export const initialState = {
     user: null,
@@ -12,6 +11,8 @@ export const initialState = {
         maxPrice: 10000,
         rating: 0,
     },
+    loading: false,
+    error: null,
 };
 
 export const actionTypes = {
@@ -25,6 +26,8 @@ export const actionTypes = {
     SET_SEARCH_QUERY: 'SET_SEARCH_QUERY',
     SET_FILTERS: 'SET_FILTERS',
     RESET_FILTERS: 'RESET_FILTERS',
+    SET_LOADING: 'SET_LOADING',
+    SET_ERROR: 'SET_ERROR',
 };
 
 export const appReducer = (state, action) => {
@@ -59,7 +62,7 @@ export const appReducer = (state, action) => {
                 ...state,
                 bookings: state.bookings.map(booking =>
                     booking.id === action.payload
-                        ? { ...booking, status: 'cancelled' }
+                        ? { ...booking, status: 'CANCELLED' }
                         : booking
                 ),
             };
@@ -102,6 +105,18 @@ export const appReducer = (state, action) => {
                 filters: initialState.filters,
                 selectedSport: null,
                 searchQuery: '',
+            };
+
+        case actionTypes.SET_LOADING:
+            return {
+                ...state,
+                loading: action.payload,
+            };
+
+        case actionTypes.SET_ERROR:
+            return {
+                ...state,
+                error: action.payload,
             };
 
         default:

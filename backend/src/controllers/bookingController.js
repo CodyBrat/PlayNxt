@@ -2,7 +2,6 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-// Create booking (authenticated users)
 export const createBooking = async (req, res) => {
     try {
         const {
@@ -15,7 +14,7 @@ export const createBooking = async (req, res) => {
             price,
         } = req.body;
 
-        // Validation
+        
         if (!venueId || !date || !time) {
             return res.status(400).json({
                 error: 'Missing required fields',
@@ -37,7 +36,7 @@ export const createBooking = async (req, res) => {
             },
         });
 
-        // Update user's total bookings
+        
         await prisma.user.update({
             where: { id: req.user.id },
             data: { totalBookings: { increment: 1 } },
@@ -53,7 +52,6 @@ export const createBooking = async (req, res) => {
     }
 };
 
-// Get user's bookings
 export const getMyBookings = async (req, res) => {
     try {
         const bookings = await prisma.booking.findMany({
@@ -78,12 +76,11 @@ export const getMyBookings = async (req, res) => {
     }
 };
 
-// Cancel booking
 export const cancelBooking = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Check ownership
+        
         const booking = await prisma.booking.findUnique({
             where: { id },
         });

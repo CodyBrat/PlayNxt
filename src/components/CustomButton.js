@@ -1,4 +1,3 @@
-// src/components/CustomButton.js
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import theme from '../theme/theme';
@@ -6,8 +5,8 @@ import theme from '../theme/theme';
 const CustomButton = ({
     title,
     onPress,
-    variant = 'primary', // 'primary' | 'outline' | 'text'
-    size = 'medium', // 'small' | 'medium' | 'large'
+    variant = 'primary', 
+    size = 'medium', 
     disabled = false,
     loading = false,
     style,
@@ -75,7 +74,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
 
-    // Sizes
+    
     small: {
         paddingVertical: theme.spacing.sm,
         paddingHorizontal: theme.spacing.base,
@@ -92,7 +91,7 @@ const styles = StyleSheet.create({
         minHeight: 56,
     },
 
-    // Variants
+    
     primaryButton: {
         backgroundColor: theme.colors.primary,
         ...theme.shadows.sm,
@@ -106,7 +105,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
     },
 
-    // Text styles
+    
     buttonText: {
         fontSize: theme.fontSizes.base,
         fontFamily: theme.fonts.semiBold,
@@ -121,7 +120,7 @@ const styles = StyleSheet.create({
         color: theme.colors.primary,
     },
 
-    // States
+    
     disabled: {
         opacity: 0.5,
     },

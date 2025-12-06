@@ -1,12 +1,10 @@
 import axios from 'axios';
 import { getToken } from '../utils/storage';
 
-// IMPORTANT: iOS Simulator cannot use 'localhost', must use 127.0.0.1
-// For physical device, use your computer's network IP address
 const API_URL = __DEV__
-    ? 'http://127.0.0.1:3000/api'  // For iOS/Android simulator
-    // ? 'http://192.168.1.X:3000/api'  // For physical device (replace X with your IP)
-    : 'https://your-production-api.com/api';
+    ? 'http:
+    
+    : 'https:
 
 console.log('API URL:', API_URL);
 
@@ -15,10 +13,9 @@ const api = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    timeout: 10000, // 10 second timeout
+    timeout: 10000, 
 });
 
-// Request interceptor - attach token to all requests
 api.interceptors.request.use(
     async (config) => {
         const token = await getToken();
@@ -34,7 +31,6 @@ api.interceptors.request.use(
     }
 );
 
-// Response interceptor - handle errors
 api.interceptors.response.use(
     (response) => {
         console.log('API Response:', response.status, response.config.url);
@@ -54,7 +50,6 @@ api.interceptors.response.use(
     }
 );
 
-// Auth endpoints
 export const authAPI = {
     register: (data) => api.post('/auth/register', data),
     login: (data) => api.post('/auth/login', data),
@@ -62,7 +57,6 @@ export const authAPI = {
     getCurrentUser: () => api.get('/auth/me'),
 };
 
-// Venue endpoints
 export const venueAPI = {
     getAll: () => api.get('/venues'),
     getById: (id) => api.get(`/venues/${id}`),
@@ -73,7 +67,6 @@ export const venueAPI = {
     getVenueBookings: (id) => api.get(`/venues/${id}/bookings`),
 };
 
-// Booking endpoints
 export const bookingAPI = {
     createBooking: (data) => api.post('/bookings', data),
     getMyBookings: () => api.get('/bookings/my-bookings'),

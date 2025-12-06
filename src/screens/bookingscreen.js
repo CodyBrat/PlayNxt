@@ -1,4 +1,3 @@
-// src/screens/BookingScreen.js
 import React, { useState } from 'react';
 import {
     View,
@@ -7,6 +6,7 @@ import {
     ScrollView,
     TouchableOpacity,
     Alert,
+    ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -26,6 +26,7 @@ export default function BookingScreen() {
     const [selectedDate, setSelectedDate] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('morning');
     const [selectedSlot, setSelectedSlot] = useState(null);
+    const [isBooking, setIsBooking] = useState(false);
 
     const today = new Date().toISOString().split('T')[0];
 
@@ -38,13 +39,13 @@ export default function BookingScreen() {
         ? venue.availableSlots[selectedDate] || []
         : [];
 
-    const handleConfirmBooking = () => {
+    const handleConfirmBooking = async () => {
         if (!selectedDate || !selectedSlot) {
             Alert.alert('Incomplete Selection', 'Please select a date and time slot');
             return;
         }
 
-        const booking = {
+        const bookingData = {
             venueId: venue.id,
             venueName: venue.name,
             venueImage: venue.image,
@@ -54,22 +55,28 @@ export default function BookingScreen() {
             price: venue.price,
         };
 
-        addBooking(booking);
+        setIsBooking(true);
+        const result = await addBooking(bookingData);
+        setIsBooking(false);
 
-        Alert.alert(
-            'Booking Confirmed! 🎉',
-            `Your slot at ${venue.name} on ${selectedDate} at ${selectedSlot} has been booked successfully.`,
-            [
-                {
-                    text: 'View Bookings',
-                    onPress: () => navigation.navigate('MyBookings'),
-                },
-                {
-                    text: 'OK',
-                    onPress: () => navigation.navigate('Home'),
-                },
-            ]
-        );
+        if (result.success) {
+            Alert.alert(
+                'Booking Confirmed! 🎉',
+                `Your slot at ${venue.name} on ${selectedDate} at ${selectedSlot} has been booked successfully.`,
+                [
+                    {
+                        text: 'View Bookings',
+                        onPress: () => navigation.navigate('MyBookings'),
+                    },
+                    {
+                        text: 'OK',
+                        onPress: () => navigation.navigate('Home'),
+                    },
+                ]
+            );
+        } else {
+            Alert.alert('Booking Failed', result.error || 'Failed to create booking');
+        }
     };
 
     return (
@@ -172,11 +179,11 @@ export default function BookingScreen() {
 
             {/* Bottom Button */}
             <View style={styles.bottomBar}>
+                {/* Confirm Button */}
                 <CustomButton
-                    title="Continue"
+                    title={isBooking ? 'Booking...' : 'Confirm Booking'}
                     onPress={handleConfirmBooking}
-                    size="large"
-                    disabled={!selectedDate || !selectedSlot}
+                    disabled={!selectedDate || !selectedSlot || isBooking}
                 />
             </View>
         </SafeAreaView>

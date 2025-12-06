@@ -1,4 +1,3 @@
-// src/components/SearchBar.js
 import React from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';

@@ -10,31 +10,26 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(cors({
-    origin: '*', // Allow all origins for development
+    origin: '*', 
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 app.use(express.json());
 
-// Request logging
 app.use((req, res, next) => {
     console.log(`${req.method} ${req.path}`);
     next();
 });
 
-// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/venues', venueRoutes);
 app.use('/api/bookings', bookingRoutes);
 
-// Health check
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', message: 'PlayNxt API is running' });
 });
 
-// Error handling middleware
 app.use((err, req, res, next) => {
     console.error('Error:', err.stack);
     res.status(500).json({
@@ -44,7 +39,7 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-    console.log(`📱 For iOS Simulator use: http://127.0.0.1:${PORT}`);
-    console.log(`📱 For network access use: http://YOUR_IP:${PORT}`);
+    console.log(`🚀 Server running on http:
+    console.log(`📱 For iOS Simulator use: http:
+    console.log(`📱 For network access use: http:
 });

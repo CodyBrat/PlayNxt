@@ -8,7 +8,6 @@ import { authenticate } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// All booking routes require authentication
 router.post('/', authenticate, createBooking);
 router.get('/my-bookings', authenticate, getMyBookings);
 router.put('/:id/cancel', authenticate, cancelBooking);

@@ -1,4 +1,3 @@
-// src/screens/SignupScreen.js
 import React, { useState } from 'react';
 import {
     View,
@@ -26,7 +25,7 @@ export default function SignupScreen({ navigation }) {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [role, setRole] = useState('USER'); // USER or PROVIDER
+    const [role, setRole] = useState('USER'); 
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSignup = async () => {
@@ -51,7 +50,7 @@ export default function SignupScreen({ navigation }) {
             email: email.trim().toLowerCase(),
             phone: phone.trim() || undefined,
             password,
-            role, // Include role in registration
+            role, 
         });
         setIsLoading(false);
 

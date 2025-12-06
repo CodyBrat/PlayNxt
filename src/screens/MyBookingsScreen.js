@@ -1,5 +1,4 @@
-// src/screens/MyBookingsScreen.js
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,6 +6,8 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -15,30 +16,63 @@ import { useApp } from '../context/AppContext';
 import theme from '../theme/theme';
 
 export default function MyBookingsScreen() {
-  const { getActiveBookings, getPastBookings, cancelBooking } = useApp();
+  const { getActiveBookings, getPastBookings, cancelBooking, state } = useApp();
+  const [cancellingId, setCancellingId] = useState(null);
 
   const activeBookings = getActiveBookings();
   const pastBookings = getPastBookings();
 
-  const handleCancelBooking = (bookingId) => {
-    cancelBooking(bookingId);
+  const handleCancelBooking = async (bookingId, venueName) => {
+    Alert.alert(
+      'Cancel Booking',
+      `Are you sure you want to cancel your booking at ${venueName}?`,
+      [
+        { text: 'No', style: 'cancel' },
+        {
+          text: 'Yes, Cancel',
+          style: 'destructive',
+          onPress: async () => {
+            setCancellingId(bookingId);
+            const result = await cancelBooking(bookingId);
+            setCancellingId(null);
+
+            if (result.success) {
+              Alert.alert('Cancelled', 'Your booking has been cancelled successfully');
+            } else {
+              Alert.alert('Error', result.error || 'Failed to cancel booking');
+            }
+          },
+        },
+      ]
+    );
   };
+
+  const renderEmptyState = (message) => (
+    <View style={styles.emptyState}>
+      <MaterialCommunityIcons
+        name="calendar-blank"
+        size={80}
+        color={theme.colors.textLight}
+      />
+      <Text style={styles.emptyStateText}>{message}</Text>
+    </View>
+  );
 
   const renderBookingCard = (booking, isPast = false) => (
     <View key={booking.id} style={styles.bookingCard}>
       <View style={styles.cardImageContainer}>
-        <Image source={{ uri: booking.venueImage }} style={styles.cardImage} />
+        <Image source={{ uri: booking.venueImage || booking.venue?.image }} style={styles.cardImage} />
         <LinearGradient
           colors={['transparent', 'rgba(0,0,0,0.6)']}
           style={styles.cardGradient}
         />
-        {!isPast && booking.status === 'confirmed' && (
+        {!isPast && booking.status === 'CONFIRMED' && (
           <View style={styles.statusBadge}>
             <MaterialCommunityIcons name="check-circle" size={14} color="#10B981" />
             <Text style={styles.statusText}>Confirmed</Text>
           </View>
         )}
-        {booking.status === 'cancelled' && (
+        {booking.status === 'CANCELLED' && (
           <View style={[styles.statusBadge, styles.cancelledStatusBadge]}>
             <MaterialCommunityIcons name="close-circle" size={14} color="#EF4444" />
             <Text style={styles.cancelledStatusText}>Cancelled</Text>
@@ -48,7 +82,7 @@ export default function MyBookingsScreen() {
 
       <View style={styles.cardContent}>
         <Text style={styles.venueName} numberOfLines={1}>
-          {booking.venueName}
+          {booking.venueName || booking.venue?.name}
         </Text>
 
         <View style={styles.infoGrid}>
@@ -58,7 +92,9 @@ export default function MyBookingsScreen() {
               size={16}
               color={theme.colors.textSecondary}
             />
-            <Text style={styles.infoText}>{booking.date}</Text>
+            <Text style={styles.infoText}>
+              {new Date(booking.date).toLocaleDateString()}
+            </Text>
           </View>
           <View style={styles.infoItem}>
             <MaterialCommunityIcons
@@ -76,29 +112,25 @@ export default function MyBookingsScreen() {
             <Text style={styles.price}>₹{booking.price.toLocaleString()}</Text>
           </View>
 
-          {!isPast && booking.status === 'confirmed' && (
+          {!isPast && booking.status === 'CONFIRMED' && (
             <TouchableOpacity
               style={styles.cancelButton}
-              onPress={() => handleCancelBooking(booking.id)}
+              onPress={() => handleCancelBooking(booking.id, booking.venueName)}
               activeOpacity={0.7}
+              disabled={cancellingId === booking.id}
             >
-              <MaterialCommunityIcons
-                name="close-circle-outline"
-                size={18}
-                color="#EF4444"
-              />
-              <Text style={styles.cancelText}>Cancel</Text>
-            </TouchableOpacity>
-          )}
-
-          {isPast && (
-            <TouchableOpacity style={styles.rebookButton} activeOpacity={0.7}>
-              <MaterialCommunityIcons
-                name="refresh"
-                size={18}
-                color={theme.colors.primary}
-              />
-              <Text style={styles.rebookText}>Rebook</Text>
+              {cancellingId === booking.id ? (
+                <ActivityIndicator size="small" color="#EF4444" />
+              ) : (
+                <>
+                  <MaterialCommunityIcons
+                    name="close-circle-outline"
+                    size={18}
+                    color="#EF4444"
+                  />
+                  <Text style={styles.cancelText}>Cancel</Text>
+                </>
+              )}
             </TouchableOpacity>
           )}
         </View>
@@ -128,7 +160,7 @@ export default function MyBookingsScreen() {
         contentContainerStyle={styles.scrollContent}
       >
         {/* Active Bookings */}
-        {activeBookings.length > 0 && (
+        {activeBookings.length > 0 ? (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <MaterialCommunityIcons
@@ -140,6 +172,8 @@ export default function MyBookingsScreen() {
             </View>
             {activeBookings.map((booking) => renderBookingCard(booking))}
           </View>
+        ) : (
+          renderEmptyState('No active bookings yet. Book your first turf!')
         )}
 
         {/* Past Bookings */}

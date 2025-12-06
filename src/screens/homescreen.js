@@ -1,4 +1,3 @@
-// src/screens/homescreen.js
 import React from 'react';
 import {
   View,
@@ -11,7 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { useApp } from '../context/AppContext';
-import { sportsCategories } from '../data/mockData';
+import { sportsCategories } from '../data/sportsCategories';
 import theme from '../theme/theme';
 import SearchBar from '../components/SearchBar';
 import SportCategoryCard from '../components/SportCategoryCard';

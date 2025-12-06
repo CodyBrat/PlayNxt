@@ -1,28 +1,27 @@
-// src/theme/theme.js
 export const theme = {
     colors: {
-        primary: '#B8FF3C',        // Lime green - main accent
-        primaryDark: '#9FE020',    // Darker lime for pressed states
-        primaryLight: '#D4FF8A',   // Lighter lime for backgrounds
+        primary: '#B8FF3C',        
+        primaryDark: '#9FE020',    
+        primaryLight: '#D4FF8A',   
 
-        secondary: '#1A1D29',      // Dark navy - sport cards
-        secondaryLight: '#2A2F3E', // Lighter navy
+        secondary: '#1A1D29',      
+        secondaryLight: '#2A2F3E', 
 
-        background: '#F8F9FA',     // Light gray background
-        surface: '#FFFFFF',        // White cards/surfaces
+        background: '#F8F9FA',     
+        surface: '#FFFFFF',        
 
-        text: '#1A1D29',           // Dark text
-        textSecondary: '#6B7280',  // Gray text
-        textLight: '#9CA3AF',      // Light gray text
+        text: '#1A1D29',           
+        textSecondary: '#6B7280',  
+        textLight: '#9CA3AF',      
 
-        error: '#EF4444',          // Red for errors
-        success: '#10B981',        // Green for success
-        warning: '#F59E0B',        // Orange for warnings
+        error: '#EF4444',          
+        success: '#10B981',        
+        warning: '#F59E0B',        
 
-        border: '#E5E7EB',         // Light borders
-        divider: '#F3F4F6',        // Subtle dividers
+        border: '#E5E7EB',         
+        divider: '#F3F4F6',        
 
-        // Slot status colors
+        
         slotAvailable: '#B8FF3C',
         slotBooked: '#EF4444',
         slotSelected: '#B8FF3C',

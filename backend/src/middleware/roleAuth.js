@@ -1,4 +1,3 @@
-// Role-based authorization middleware
 export const requireRole = (allowedRoles) => {
     return (req, res, next) => {
         if (!req.user) {
@@ -16,7 +15,6 @@ export const requireRole = (allowedRoles) => {
     };
 };
 
-// Check if user owns the resource
 export const checkOwnership = (getOwnerId) => {
     return async (req, res, next) => {
         try {

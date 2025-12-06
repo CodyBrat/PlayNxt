@@ -4,12 +4,11 @@ import { generateToken } from '../utils/jwt.js';
 
 const prisma = new PrismaClient();
 
-// Register new user
 export const register = async (req, res) => {
     try {
         const { name, email, password, phone, role } = req.body;
 
-        // Validation
+        
         if (!name || !email || !password) {
             return res.status(400).json({ error: 'Name, email, and password are required' });
         }
@@ -18,7 +17,7 @@ export const register = async (req, res) => {
             return res.status(400).json({ error: 'Password must be at least 6 characters' });
         }
 
-        // Check if user already exists
+        
         const existingUser = await prisma.user.findUnique({
             where: { email },
         });
@@ -27,18 +26,18 @@ export const register = async (req, res) => {
             return res.status(400).json({ error: 'Email already registered' });
         }
 
-        // Hash password
+        
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create user
+        
         const user = await prisma.user.create({
             data: {
                 name,
                 email,
                 password: hashedPassword,
                 phone: phone || null,
-                role: role || 'USER', // Default to USER if not specified
-                avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=B8FF3C&color=1A1D29&size=200`,
+                role: role || 'USER', 
+                avatar: `https:
             },
             select: {
                 id: true,
@@ -53,7 +52,7 @@ export const register = async (req, res) => {
             },
         });
 
-        // Generate token
+        
         const token = generateToken(user.id);
 
         res.status(201).json({
@@ -67,17 +66,16 @@ export const register = async (req, res) => {
     }
 };
 
-// Login user
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Validation
+        
         if (!email || !password) {
             return res.status(400).json({ error: 'Email and password are required' });
         }
 
-        // Find user
+        
         const user = await prisma.user.findUnique({
             where: { email },
         });
@@ -86,23 +84,23 @@ export const login = async (req, res) => {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
 
-        // Check password
+        
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
 
-        // Update last login
+        
         await prisma.user.update({
             where: { id: user.id },
             data: { lastLogin: new Date() },
         });
 
-        // Generate token
+        
         const token = generateToken(user.id);
 
-        // Return user without password
+        
         const { password: _, ...userWithoutPassword } = user;
 
         res.json({
@@ -116,10 +114,9 @@ export const login = async (req, res) => {
     }
 };
 
-// Get current user
 export const getCurrentUser = async (req, res) => {
     try {
-        // User is already attached by auth middleware
+        
         res.json({ user: req.user });
     } catch (error) {
         console.error('Get current user error:', error);
@@ -127,10 +124,9 @@ export const getCurrentUser = async (req, res) => {
     }
 };
 
-// Logout (optional - mainly client-side token removal)
 export const logout = async (req, res) => {
     try {
-        // In a more advanced setup, you could blacklist the token here
+        
         res.json({ message: 'Logout successful' });
     } catch (error) {
         console.error('Logout error:', error);
