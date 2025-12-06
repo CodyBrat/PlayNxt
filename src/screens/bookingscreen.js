@@ -13,15 +13,15 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Calendar } from 'react-native-calendars';
 import { useApp } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 import theme from '../theme/theme';
 import SlotPicker from '../components/SlotPicker';
 import CustomButton from '../components/CustomButton';
 
-export default function BookingScreen() {
-    const navigation = useNavigation();
-    const route = useRoute();
+export default function BookingScreen({ route, navigation }) {
     const { venue } = route.params;
     const { addBooking } = useApp();
+    const { refreshUser } = useAuth();
 
     const [selectedDate, setSelectedDate] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('morning');
@@ -41,7 +41,7 @@ export default function BookingScreen() {
 
     const handleConfirmBooking = async () => {
         if (!selectedDate || !selectedSlot) {
-            Alert.alert('Incomplete Selection', 'Please select a date and time slot');
+            Alert.alert('Missing Information', 'Please select both date and time');
             return;
         }
 
@@ -60,13 +60,15 @@ export default function BookingScreen() {
         setIsBooking(false);
 
         if (result.success) {
+            await refreshUser();
+
             Alert.alert(
-                'Booking Confirmed! 🎉',
-                `Your slot at ${venue.name} on ${selectedDate} at ${selectedSlot} has been booked successfully.`,
+                'Success! 🎉',
+                result.message || 'Booking confirmed successfully. You earned 10 reward points!',
                 [
                     {
-                        text: 'View Bookings',
-                        onPress: () => navigation.navigate('MyBookings'),
+                        text: 'View My Bookings',
+                        onPress: () => navigation.navigate('MyBookings')
                     },
                     {
                         text: 'OK',

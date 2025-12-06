@@ -114,8 +114,13 @@ export const createVenue = async (req, res) => {
             },
         });
 
+        await prisma.user.update({
+            where: { id: req.user.id },
+            data: { rewardPoints: { increment: 10 } }
+        });
+
         res.status(201).json({
-            message: 'Venue created successfully',
+            message: 'Venue created successfully. You earned 10 reward points!',
             venue,
         });
     } catch (error) {

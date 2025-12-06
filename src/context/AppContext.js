@@ -9,12 +9,12 @@ export const AppProvider = ({ children }) => {
     const [state, dispatch] = useReducer(appReducer, initialState);
     const { user, isAuthenticated } = useAuth();
 
-    
+
     useEffect(() => {
         loadVenues();
     }, []);
 
-    
+
     useEffect(() => {
         if (isAuthenticated && user) {
             loadBookings();
@@ -43,13 +43,14 @@ export const AppProvider = ({ children }) => {
         }
     };
 
-    
+
     const addBooking = async (bookingData) => {
         try {
             const response = await bookingAPI.createBooking(bookingData);
             const newBooking = response.data.booking;
             dispatch({ type: actionTypes.ADD_BOOKING, payload: newBooking });
-            return { success: true, booking: newBooking };
+
+            return { success: true, booking: newBooking, message: response.data.message };
         } catch (error) {
             console.error('Failed to create booking:', error);
             const message = error.response?.data?.error || 'Failed to create booking';
@@ -57,7 +58,7 @@ export const AppProvider = ({ children }) => {
         }
     };
 
-    
+
     const cancelBooking = async (bookingId) => {
         try {
             await bookingAPI.cancelBooking(bookingId);
@@ -90,16 +91,16 @@ export const AppProvider = ({ children }) => {
         dispatch({ type: actionTypes.RESET_FILTERS });
     };
 
-    
+
     const getFilteredVenues = () => {
         let filtered = state.venues;
 
-        
+
         if (state.selectedSport) {
             filtered = filtered.filter(venue => venue.sport === state.selectedSport);
         }
 
-        
+
         if (state.searchQuery) {
             const query = state.searchQuery.toLowerCase();
             filtered = filtered.filter(
@@ -110,14 +111,14 @@ export const AppProvider = ({ children }) => {
             );
         }
 
-        
+
         filtered = filtered.filter(
             venue =>
                 venue.price >= state.filters.minPrice &&
                 venue.price <= state.filters.maxPrice
         );
 
-        
+
         if (state.filters.rating > 0) {
             filtered = filtered.filter(venue => venue.rating >= state.filters.rating);
         }

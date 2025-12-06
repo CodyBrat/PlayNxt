@@ -45,11 +45,14 @@ export const createBooking = async (req, res) => {
 
         await prisma.user.update({
             where: { id: req.user.id },
-            data: { totalBookings: { increment: 1 } },
+            data: {
+                totalBookings: { increment: 1 },
+                rewardPoints: { increment: 10 }
+            },
         });
 
         res.status(201).json({
-            message: 'Booking created successfully',
+            message: 'Booking created successfully. You earned 10 reward points!',
             booking,
         });
     } catch (error) {

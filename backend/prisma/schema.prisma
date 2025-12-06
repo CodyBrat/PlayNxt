@@ -22,6 +22,7 @@ model User {
   avatar          String?
   role            UserRole  @default(USER)
   totalBookings   Int       @default(0)
+  rewardPoints    Int       @default(0)
   isEmailVerified Boolean   @default(false)
   lastLogin       DateTime?
   joinedDate      DateTime  @default(now())

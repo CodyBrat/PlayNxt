@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../context/AuthContext';
 import { venueAPI } from '../services/api';
 import { sportsCategories } from '../data/sportsCategories';
 import theme from '../theme/theme';
@@ -21,6 +22,7 @@ import CustomButton from '../components/CustomButton';
 
 export default function CreateVenueScreen() {
     const navigation = useNavigation();
+    const { refreshUser } = useAuth();
     const [loading, setLoading] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -77,9 +79,11 @@ export default function CreateVenueScreen() {
 
             await venueAPI.createVenue(venueData);
 
+            await refreshUser();
+
             Alert.alert(
                 'Success! 🎉',
-                'Your venue has been created successfully',
+                'Your venue has been created successfully. You earned 10 reward points!',
                 [
                     {
                         text: 'OK',

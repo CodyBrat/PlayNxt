@@ -61,27 +61,13 @@ export default function ProfileScreen() {
         },
         {
             id: '3',
-            icon: 'wallet-outline',
-            label: 'Payment Methods',
-            color: theme.colors.text,
-            onPress: () => { },
-        },
-        {
-            id: '4',
-            icon: 'cog-outline',
-            label: 'Settings',
-            color: theme.colors.text,
-            onPress: () => { },
-        },
-        {
-            id: '5',
             icon: 'help-circle-outline',
             label: 'Help & Support',
             color: theme.colors.text,
             onPress: () => { },
         },
         {
-            id: '6',
+            id: '4',
             icon: 'logout',
             label: 'Logout',
             color: theme.colors.error,
@@ -140,19 +126,8 @@ export default function ProfileScreen() {
                                 color={theme.colors.primary}
                             />
                         </View>
-                        <Text style={styles.statValue}>{user.totalBookings}</Text>
+                        <Text style={styles.statValue}>{user.totalBookings || 0}</Text>
                         <Text style={styles.statLabel}>Bookings</Text>
-                    </View>
-                    <View style={styles.statCard}>
-                        <View style={styles.statIconCircle}>
-                            <MaterialCommunityIcons
-                                name="heart"
-                                size={24}
-                                color="#FF6B6B"
-                            />
-                        </View>
-                        <Text style={styles.statValue}>{state.favorites.length}</Text>
-                        <Text style={styles.statLabel}>Favorites</Text>
                     </View>
                     <View style={styles.statCard}>
                         <View style={styles.statIconCircle}>
@@ -162,7 +137,7 @@ export default function ProfileScreen() {
                                 color="#FFB800"
                             />
                         </View>
-                        <Text style={styles.statValue}>15</Text>
+                        <Text style={styles.statValue}>{user.rewardPoints || 0}</Text>
                         <Text style={styles.statLabel}>Rewards</Text>
                     </View>
                 </View>

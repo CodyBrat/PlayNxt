@@ -47,6 +47,7 @@ export const register = async (req, res) => {
                 avatar: true,
                 role: true,
                 totalBookings: true,
+                rewardPoints: true,
                 isEmailVerified: true,
                 joinedDate: true,
             },
@@ -78,6 +79,19 @@ export const login = async (req, res) => {
 
         const user = await prisma.user.findUnique({
             where: { email },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                phone: true,
+                avatar: true,
+                role: true,
+                totalBookings: true,
+                rewardPoints: true,
+                isEmailVerified: true,
+                joinedDate: true,
+                password: true,
+            },
         });
 
         if (!user) {

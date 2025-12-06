@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
-    
+
     useEffect(() => {
         loadUser();
     }, []);
@@ -23,13 +23,13 @@ export const AuthProvider = ({ children }) => {
                 setUser(cachedUser);
                 setIsAuthenticated(true);
 
-                
+
                 try {
                     const response = await authAPI.getCurrentUser();
                     setUser(response.data.user);
                     await saveUser(response.data.user);
                 } catch (error) {
-                    
+
                     await clearAuthData();
                     setUser(null);
                     setIsAuthenticated(false);
@@ -88,6 +88,18 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const refreshUser = async () => {
+        try {
+            const response = await authAPI.getCurrentUser();
+            setUser(response.data.user);
+            await saveUser(response.data.user);
+            return response.data.user;
+        } catch (error) {
+            console.error('Refresh user error:', error);
+            return null;
+        }
+    };
+
     const value = {
         user,
         isAuthenticated,
@@ -95,6 +107,7 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
+        refreshUser,
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
