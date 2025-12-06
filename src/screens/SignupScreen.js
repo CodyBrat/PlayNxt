@@ -25,7 +25,7 @@ export default function SignupScreen({ navigation }) {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [role, setRole] = useState('USER'); 
+    const [role, setRole] = useState('USER');
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSignup = async () => {
@@ -50,11 +50,17 @@ export default function SignupScreen({ navigation }) {
             email: email.trim().toLowerCase(),
             phone: phone.trim() || undefined,
             password,
-            role, 
+            role,
         });
         setIsLoading(false);
 
-        if (!result.success) {
+        if (result.success) {
+            Alert.alert(
+                'Welcome!🎉',
+                `Account created successfully! You're now logged in as ${role === 'PROVIDER' ? 'a Turf Owner' : 'a Customer'}.`,
+                [{ text: 'Get Started', onPress: () => { } }]
+            );
+        } else {
             Alert.alert('Signup Failed', result.error);
         }
     };

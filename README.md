@@ -278,10 +278,25 @@ cd PlayNxt && npm start
 
 ### Frontend
 
-API URL is configured in `src/services/api.js`:
-- **iOS Simulator**: `http://127.0.0.1:3000/api`
-- **Android Emulator**: `http://10.0.2.2:3000/api`
-- **Physical Device**: `http://YOUR_COMPUTER_IP:3000/api`
+API URL is automatically configured based on platform in `src/services/api.js`:
+- **iOS Simulator**: `http://127.0.0.1:3000/api` (automatically detected)
+- **Android Emulator**: `http://10.0.2.2:3000/api` (automatically detected)
+- **Physical Device**: Update the code to use your computer's network IP:
+
+```javascript
+const getApiUrl = () => {
+  if (!__DEV__) {
+    return 'https://your-production-api.com/api';
+  }
+  
+  // For physical device testing, uncomment and set your IP:
+  // return 'http://192.168.1.X:3000/api';
+  
+  return Platform.OS === 'android'
+    ? 'http://10.0.2.2:3000/api'
+    : 'http://127.0.0.1:3000/api';
+};
+```
 
 ---
 
