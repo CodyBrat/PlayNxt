@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
     View,
     Text,
@@ -36,6 +36,10 @@ export default function CreateVenueScreen() {
     });
 
     const [errors, setErrors] = useState({});
+
+    const updateField = useCallback((field, value) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+    }, []);
 
     const validate = () => {
         const newErrors = {};
@@ -78,8 +82,8 @@ export default function CreateVenueScreen() {
                 'Your venue has been created successfully',
                 [
                     {
-                        text: 'View My Venues',
-                        onPress: () => navigation.navigate('MyVenues'),
+                        text: 'OK',
+                        onPress: () => navigation.goBack(),
                     },
                 ]
             );
@@ -91,22 +95,24 @@ export default function CreateVenueScreen() {
         }
     };
 
-    const InputField = ({ label, value, onChangeText, placeholder, error, keyboardType, multiline }) => (
+    const InputField = useCallback(({ label, value, field, placeholder, error, keyboardType, multiline }) => (
         <View style={styles.inputGroup}>
             <Text style={styles.label}>{label} {label.includes('*') ? '' : '*'}</Text>
             <TextInput
                 style={[styles.input, multiline && styles.textArea, error && styles.inputError]}
                 value={value}
-                onChangeText={onChangeText}
+                onChangeText={(text) => updateField(field, text)}
                 placeholder={placeholder}
                 placeholderTextColor={theme.colors.textLight}
                 keyboardType={keyboardType || 'default'}
                 multiline={multiline}
                 numberOfLines={multiline ? 4 : 1}
+                returnKeyType={multiline ? 'default' : 'next'}
+                blurOnSubmit={multiline}
             />
             {error && <Text style={styles.errorText}>{error}</Text>}
         </View>
-    );
+    ), [updateField]);
 
     return (
         <View style={styles.container}>
@@ -121,21 +127,16 @@ export default function CreateVenueScreen() {
             </SafeAreaView>
 
             <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={styles.flex}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
             >
-                <ScrollView
-                    style={styles.content}
-                    showsVerticalScrollIndicator={false}
-                    keyboardShouldPersistTaps="handled"
-                >
+                <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
                     <Text style={styles.sectionTitle}>Basic Information</Text>
 
                     <InputField
                         label="Venue Name *"
                         value={formData.name}
-                        onChangeText={(text) => setFormData({ ...formData, name: text })}
+                        field="name"
                         placeholder="e.g., GreenKick Arena"
                         error={errors.name}
                     />
@@ -143,7 +144,7 @@ export default function CreateVenueScreen() {
                     <InputField
                         label="Full Address *"
                         value={formData.location}
-                        onChangeText={(text) => setFormData({ ...formData, location: text })}
+                        field="location"
                         placeholder="Plot 12, Road 5, Dhanmondi, Dhaka 1209"
                         error={errors.location}
                         multiline
@@ -152,7 +153,7 @@ export default function CreateVenueScreen() {
                     <InputField
                         label="Short Location"
                         value={formData.shortLocation}
-                        onChangeText={(text) => setFormData({ ...formData, shortLocation: text })}
+                        field="shortLocation"
                         placeholder="e.g., Dhanmondi, Dhaka"
                     />
 
@@ -168,7 +169,7 @@ export default function CreateVenueScreen() {
                                         styles.sportTag,
                                         formData.sport === sport.name && styles.sportTagActive,
                                     ]}
-                                    onPress={() => setFormData({ ...formData, sport: sport.name })}
+                                    onPress={() => updateField('sport', sport.name)}
                                 >
                                     <Text
                                         style={[
@@ -186,7 +187,7 @@ export default function CreateVenueScreen() {
                     <InputField
                         label="Venue Type"
                         value={formData.type}
-                        onChangeText={(text) => setFormData({ ...formData, type: text })}
+                        field="type"
                         placeholder="e.g., 5-a-side, 7-a-side, Full size"
                     />
 
@@ -196,10 +197,12 @@ export default function CreateVenueScreen() {
                             <TextInput
                                 style={[styles.input, errors.price && styles.inputError]}
                                 value={formData.price}
-                                onChangeText={(text) => setFormData({ ...formData, price: text })}
+                                onChangeText={(text) => updateField('price', text)}
                                 placeholder="3000"
                                 keyboardType="numeric"
                                 placeholderTextColor={theme.colors.textLight}
+                                returnKeyType="next"
+                                blurOnSubmit={false}
                             />
                             {errors.price && <Text style={styles.errorText}>{errors.price}</Text>}
                         </View>
@@ -209,9 +212,11 @@ export default function CreateVenueScreen() {
                             <TextInput
                                 style={styles.input}
                                 value={formData.priceUnit}
-                                onChangeText={(text) => setFormData({ ...formData, priceUnit: text })}
+                                onChangeText={(text) => updateField('priceUnit', text)}
                                 placeholder="60 minutes"
                                 placeholderTextColor={theme.colors.textLight}
+                                returnKeyType="next"
+                                blurOnSubmit={false}
                             />
                         </View>
                     </View>
@@ -219,7 +224,7 @@ export default function CreateVenueScreen() {
                     <InputField
                         label="About Venue"
                         value={formData.about}
-                        onChangeText={(text) => setFormData({ ...formData, about: text })}
+                        field="about"
                         placeholder="Describe your venue, facilities, and what makes it special..."
                         multiline
                     />
@@ -227,7 +232,7 @@ export default function CreateVenueScreen() {
                     <InputField
                         label="Contact Phone"
                         value={formData.contactPhone}
-                        onChangeText={(text) => setFormData({ ...formData, contactPhone: text })}
+                        field="contactPhone"
                         placeholder="+91 98765 43210"
                         keyboardType="phone-pad"
                     />
