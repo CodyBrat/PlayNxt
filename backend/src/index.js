@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors({
-    origin: '*', 
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
@@ -39,7 +39,7 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server running on http:
-    console.log(`📱 For iOS Simulator use: http:
-    console.log(`📱 For network access use: http:
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`📱 For iOS Simulator use: http://127.0.0.1:${PORT}`);
+    console.log(`📱 For network access use: http://YOUR_IP:${PORT}`);
 });

@@ -8,7 +8,7 @@ export const register = async (req, res) => {
     try {
         const { name, email, password, phone, role } = req.body;
 
-        
+
         if (!name || !email || !password) {
             return res.status(400).json({ error: 'Name, email, and password are required' });
         }
@@ -17,7 +17,7 @@ export const register = async (req, res) => {
             return res.status(400).json({ error: 'Password must be at least 6 characters' });
         }
 
-        
+
         const existingUser = await prisma.user.findUnique({
             where: { email },
         });
@@ -26,18 +26,18 @@ export const register = async (req, res) => {
             return res.status(400).json({ error: 'Email already registered' });
         }
 
-        
+
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        
+
         const user = await prisma.user.create({
             data: {
                 name,
                 email,
                 password: hashedPassword,
                 phone: phone || null,
-                role: role || 'USER', 
-                avatar: `https:
+                role: role || 'USER',
+                avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=B8FF3C&color=1A1D29&size=200`,
             },
             select: {
                 id: true,
@@ -52,7 +52,7 @@ export const register = async (req, res) => {
             },
         });
 
-        
+
         const token = generateToken(user.id);
 
         res.status(201).json({
@@ -70,12 +70,12 @@ export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        
+
         if (!email || !password) {
             return res.status(400).json({ error: 'Email and password are required' });
         }
 
-        
+
         const user = await prisma.user.findUnique({
             where: { email },
         });
@@ -84,23 +84,23 @@ export const login = async (req, res) => {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
 
-        
+
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
 
-        
+
         await prisma.user.update({
             where: { id: user.id },
             data: { lastLogin: new Date() },
         });
 
-        
+
         const token = generateToken(user.id);
 
-        
+
         const { password: _, ...userWithoutPassword } = user;
 
         res.json({
@@ -116,7 +116,7 @@ export const login = async (req, res) => {
 
 export const getCurrentUser = async (req, res) => {
     try {
-        
+
         res.json({ user: req.user });
     } catch (error) {
         console.error('Get current user error:', error);
@@ -126,7 +126,7 @@ export const getCurrentUser = async (req, res) => {
 
 export const logout = async (req, res) => {
     try {
-        
+
         res.json({ message: 'Logout successful' });
     } catch (error) {
         console.error('Logout error:', error);

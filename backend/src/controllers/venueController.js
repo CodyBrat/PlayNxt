@@ -86,7 +86,7 @@ export const createVenue = async (req, res) => {
             contactPhone,
         } = req.body;
 
-        
+
         if (!name || !location || !sport || !price) {
             return res.status(400).json({
                 error: 'Missing required fields',
@@ -103,7 +103,7 @@ export const createVenue = async (req, res) => {
                 type: type || 'Standard',
                 price,
                 priceUnit: priceUnit || '60 minutes',
-                image: image || 'https:
+                image: image || 'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=800',
                 images: images || [],
                 about: about || 'A great venue for sports activities.',
                 facilities: facilities || [],
@@ -128,7 +128,7 @@ export const updateVenue = async (req, res) => {
     try {
         const { id } = req.params;
 
-        
+
         const venue = await prisma.venue.findUnique({
             where: { id },
         });
@@ -141,7 +141,7 @@ export const updateVenue = async (req, res) => {
             return res.status(403).json({ error: 'You can only update your own venues' });
         }
 
-        
+
         const updatedVenue = await prisma.venue.update({
             where: { id },
             data: req.body,
@@ -161,7 +161,7 @@ export const deleteVenue = async (req, res) => {
     try {
         const { id } = req.params;
 
-        
+
         const venue = await prisma.venue.findUnique({
             where: { id },
         });
@@ -189,7 +189,7 @@ export const getVenueBookings = async (req, res) => {
     try {
         const { id } = req.params;
 
-        
+
         const venue = await prisma.venue.findUnique({
             where: { id },
         });

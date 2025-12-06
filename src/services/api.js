@@ -2,9 +2,8 @@ import axios from 'axios';
 import { getToken } from '../utils/storage';
 
 const API_URL = __DEV__
-    ? 'http:
-    
-    : 'https:
+    ? 'http://127.0.0.1:3000/api'
+    : 'https://your-production-api.com/api';
 
 console.log('API URL:', API_URL);
 
@@ -13,7 +12,7 @@ const api = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    timeout: 10000, 
+    timeout: 10000,
 });
 
 api.interceptors.request.use(
