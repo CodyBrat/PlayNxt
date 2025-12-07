@@ -59,10 +59,15 @@ export default function CreateVenueScreen() {
             allowsEditing: true,
             aspect: [16, 9],
             quality: 0.5,
+            base64: true,
         });
 
         if (!result.canceled) {
-            setFormData(prev => ({ ...prev, image: result.assets[0].uri }));
+            // Convert base64 to data URI so it works across devices
+            const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+            console.log('📸 Venue image selected - Base64 length:', result.assets[0].base64?.length);
+            console.log('📸 Data URI preview:', base64Image.substring(0, 100) + '...');
+            setFormData(prev => ({ ...prev, image: base64Image }));
         }
     };
 

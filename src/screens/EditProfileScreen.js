@@ -47,11 +47,11 @@ export default function EditProfileScreen() {
         });
 
         if (!result.canceled) {
-            // For now, using the local uri. In production, you'd upload this to S3/Cloudinary and get a URL.
-            // Since we don't have a file upload server setup, we'll assume the backend can handle base64 or just storing the URI for local dev.
-            // But usually backend expects a URL.
-            // Let's use the uri for display and updating state.
-            setFormData(prev => ({ ...prev, avatar: result.assets[0].uri }));
+            // Convert base64 to data URI so it works across devices
+            const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+            console.log('📸 Image selected - Base64 length:', result.assets[0].base64?.length);
+            console.log('📸 Data URI preview:', base64Image.substring(0, 100) + '...');
+            setFormData(prev => ({ ...prev, avatar: base64Image }));
         }
     };
 
@@ -70,6 +70,9 @@ export default function EditProfileScreen() {
                 phone: formData.phone,
                 avatar: formData.avatar,
             };
+
+            console.log('💾 Saving profile with avatar length:', updateData.avatar?.length);
+            console.log('💾 Avatar preview:', updateData.avatar?.substring(0, 50) + '...');
 
             await authAPI.updateProfile(updateData);
             await refreshUser();
