@@ -14,6 +14,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
+import { Image } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { venueAPI } from '../services/api';
 import { sportsCategories } from '../data/sportsCategories';
@@ -35,6 +37,7 @@ export default function CreateVenueScreen() {
         priceUnit: '60 minutes',
         about: '',
         contactPhone: '',
+        image: null,
     });
 
     const [errors, setErrors] = useState({});
@@ -43,11 +46,32 @@ export default function CreateVenueScreen() {
         setFormData(prev => ({ ...prev, [field]: value }));
     }, []);
 
+    const pickImage = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if (status !== 'granted') {
+            Alert.alert('Permission needed', 'Sorry, we need camera roll permissions to upload venue images.');
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [16, 9],
+            quality: 0.5,
+        });
+
+        if (!result.canceled) {
+            setFormData(prev => ({ ...prev, image: result.assets[0].uri }));
+        }
+    };
+
     const validate = () => {
         const newErrors = {};
 
         if (!formData.name.trim()) newErrors.name = 'Venue name is required';
         if (!formData.location.trim()) newErrors.location = 'Location is required';
+        if (!formData.image) newErrors.image = 'Venue image is required';
         if (!formData.price || isNaN(formData.price) || Number(formData.price) <= 0) {
             newErrors.price = 'Valid price is required';
         }
@@ -135,6 +159,30 @@ export default function CreateVenueScreen() {
                 style={styles.flex}
             >
                 <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+                    <Text style={styles.sectionTitle}>Venue Image</Text>
+
+                    <TouchableOpacity
+                        style={[styles.imagePicker, errors.image && styles.inputError]}
+                        onPress={pickImage}
+                        activeOpacity={0.7}
+                    >
+                        {formData.image ? (
+                            <>
+                                <Image source={{ uri: formData.image }} style={styles.selectedImage} />
+                                <View style={styles.changeImageOverlay}>
+                                    <MaterialCommunityIcons name="camera" size={20} color="#FFF" />
+                                    <Text style={styles.changeImageText}>Change</Text>
+                                </View>
+                            </>
+                        ) : (
+                            <View style={styles.imagePlaceholder}>
+                                <MaterialCommunityIcons name="image-plus" size={40} color={theme.colors.textLight} />
+                                <Text style={styles.imagePlaceholderText}>Tap to upload venue image</Text>
+                            </View>
+                        )}
+                    </TouchableOpacity>
+                    {errors.image && <Text style={styles.errorText}>{errors.image}</Text>}
+
                     <Text style={styles.sectionTitle}>Basic Information</Text>
 
                     <InputField
@@ -362,5 +410,48 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.surface,
         borderTopWidth: 1,
         borderTopColor: theme.colors.border,
+    },
+    imagePicker: {
+        height: 200,
+        backgroundColor: theme.colors.surface,
+        borderRadius: theme.borderRadius.lg,
+        borderWidth: 1,
+        borderColor: theme.colors.border,
+        borderStyle: 'dashed',
+        overflow: 'hidden',
+        marginBottom: theme.spacing.sm,
+    },
+    selectedImage: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
+    },
+    imagePlaceholder: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: theme.spacing.sm,
+    },
+    imagePlaceholderText: {
+        fontSize: theme.fontSizes.sm,
+        fontFamily: theme.fonts.medium,
+        color: theme.colors.textLight,
+    },
+    changeImageOverlay: {
+        position: 'absolute',
+        bottom: theme.spacing.md,
+        right: theme.spacing.md,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        paddingHorizontal: theme.spacing.md,
+        paddingVertical: theme.spacing.xs,
+        borderRadius: theme.borderRadius.full,
+    },
+    changeImageText: {
+        color: '#FFF',
+        fontSize: theme.fontSizes.xs,
+        fontFamily: theme.fonts.medium,
     },
 });

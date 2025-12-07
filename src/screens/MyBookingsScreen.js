@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -16,8 +17,15 @@ import { useApp } from '../context/AppContext';
 import theme from '../theme/theme';
 
 export default function MyBookingsScreen() {
-  const { getActiveBookings, getPastBookings, cancelBooking, state } = useApp();
+  const { getActiveBookings, getPastBookings, cancelBooking, loadBookings } = useApp();
   const [cancellingId, setCancellingId] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadBookings();
+    setRefreshing(false);
+  }, [loadBookings]);
 
   const activeBookings = getActiveBookings();
   const pastBookings = getPastBookings();
@@ -158,6 +166,9 @@ export default function MyBookingsScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />
+        }
       >
         {/* Active Bookings */}
         {activeBookings.length > 0 ? (

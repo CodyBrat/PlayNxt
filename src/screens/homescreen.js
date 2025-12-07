@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -19,13 +20,22 @@ import VenueCard from '../components/VenueCard';
 export default function HomeScreen() {
   const navigation = useNavigation();
   const {
-    state,
-    setSearchQuery,
-    setSelectedSport,
     getFilteredVenues,
     toggleFavorite,
     isFavorite,
+    loadVenues,
+    state,
+    setSearchQuery,
+    setSelectedSport,
   } = useApp();
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadVenues();
+    setRefreshing(false);
+  }, [loadVenues]);
 
   const filteredVenues = getFilteredVenues();
 
@@ -75,6 +85,9 @@ export default function HomeScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />
+        }
       >
         {/* Sport Categories */}
         <View style={styles.section}>
