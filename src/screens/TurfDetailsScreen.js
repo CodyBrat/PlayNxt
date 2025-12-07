@@ -127,8 +127,8 @@ export default function TurfDetailsScreen() {
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>Facilities</Text>
                         <View style={styles.facilitiesGrid}>
-                            {venue.facilities.map((facility) => (
-                                <FacilityIcon key={facility.id} facility={facility} />
+                            {venue.facilities.map((facility, index) => (
+                                <FacilityIcon key={`${facility.name}-${index}`} facility={facility} />
                             ))}
                         </View>
                     </View>

@@ -30,16 +30,43 @@ export default function BookingScreen({ route, navigation }) {
 
     const today = new Date().toISOString().split('T')[0];
 
+    const generateTimeSlots = () => {
+        const slots = [];
+        const startHour = 6;
+        const endHour = 22;
+
+        for (let hour = startHour; hour <= endHour; hour++) {
+            const startTime = hour < 12 ? `${hour}:00 AM` : hour === 12 ? '12:00 PM' : `${hour - 12}:00 PM`;
+            const endTime = hour + 1 < 12 ? `${hour + 1}:00 AM` : hour + 1 === 12 ? '12:00 PM' : `${hour + 1 - 12}:00 PM`;
+            slots.push(`${startTime} - ${endTime}`);
+        }
+
+        return slots;
+    };
+
+    const filterSlotsByCategory = (slots, category) => {
+        if (category === 'morning') {
+            return slots.filter(slot => slot.includes('AM') && !slot.startsWith('12:'));
+        } else if (category === 'afternoon') {
+            return slots.filter(slot => slot.startsWith('12:') || (slot.includes('PM') && (parseInt(slot) < 6)));
+        } else {
+            return slots.filter(slot => slot.includes('PM') && parseInt(slot) >= 6);
+        }
+    };
+
     const handleDateSelect = (day) => {
         setSelectedDate(day.dateString);
         setSelectedSlot(null);
     };
 
-    const availableSlots = selectedDate
-        ? venue.availableSlots[selectedDate] || []
-        : [];
+    const allSlots = generateTimeSlots();
+    const availableSlots = selectedDate ? filterSlotsByCategory(allSlots, selectedCategory) : [];
 
     const handleConfirmBooking = async () => {
+        console.log('🎯 Confirm Booking clicked!');
+        console.log('📅 Selected date:', selectedDate);
+        console.log('⏰ Selected slot:', selectedSlot);
+
         if (!selectedDate || !selectedSlot) {
             Alert.alert('Missing Information', 'Please select both date and time');
             return;
@@ -67,12 +94,11 @@ export default function BookingScreen({ route, navigation }) {
                 result.message || 'Booking confirmed successfully. You earned 10 reward points!',
                 [
                     {
-                        text: 'View My Bookings',
-                        onPress: () => navigation.navigate('MyBookings')
-                    },
-                    {
                         text: 'OK',
-                        onPress: () => navigation.navigate('Home'),
+                        onPress: () => {
+                            navigation.goBack();
+                            navigation.goBack();
+                        },
                     },
                 ]
             );

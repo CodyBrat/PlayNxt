@@ -23,11 +23,14 @@ export const AppProvider = ({ children }) => {
 
     const loadVenues = async () => {
         try {
+            console.log('📍 Loading venues...');
             dispatch({ type: actionTypes.SET_LOADING, payload: true });
             const response = await venueAPI.getAll();
+            console.log('✅ Venues loaded:', response.data.venues?.length, 'venues');
+            console.log('📋 Venues:', JSON.stringify(response.data.venues, null, 2));
             dispatch({ type: actionTypes.SET_VENUES, payload: response.data.venues });
         } catch (error) {
-            console.error('Failed to load venues:', error);
+            console.error('❌ Failed to load venues:', error);
             dispatch({ type: actionTypes.SET_ERROR, payload: 'Failed to load venues' });
         } finally {
             dispatch({ type: actionTypes.SET_LOADING, payload: false });

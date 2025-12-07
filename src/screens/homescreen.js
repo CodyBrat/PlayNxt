@@ -29,6 +29,11 @@ export default function HomeScreen() {
 
   const filteredVenues = getFilteredVenues();
 
+  console.log('🏠 HomeScreen - Total venues in state:', state.venues?.length);
+  console.log('🏠 HomeScreen - Filtered venues:', filteredVenues.length);
+  console.log('🏠 HomeScreen - Selected sport:', state.selectedSport);
+  console.log('🏠 HomeScreen - Search query:', state.searchQuery);
+
   const handleSportPress = (sportName) => {
     if (state.selectedSport === sportName) {
       setSelectedSport(null);
