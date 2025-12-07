@@ -147,3 +147,39 @@ export const logout = async (req, res) => {
         res.status(500).json({ error: 'Logout failed' });
     }
 };
+
+export const updateProfile = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { name, phone, avatar } = req.body;
+
+        const updatedUser = await prisma.user.update({
+            where: { id: userId },
+            data: {
+                name,
+                phone,
+                avatar,
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                phone: true,
+                avatar: true,
+                role: true,
+                totalBookings: true,
+                rewardPoints: true,
+                isEmailVerified: true,
+                joinedDate: true,
+            },
+        });
+
+        res.json({
+            message: 'Profile updated successfully',
+            user: updatedUser,
+        });
+    } catch (error) {
+        console.error('Update profile error:', error);
+        res.status(500).json({ error: 'Failed to update profile' });
+    }
+};

@@ -13,6 +13,7 @@ import TurfDetailsScreen from '../screens/TurfDetailsScreen';
 import BookingScreen from '../screens/BookingScreen';
 import MyBookingsScreen from '../screens/MyBookingsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import EditProfileScreen from '../screens/EditProfileScreen';
 
 import ProviderDashboardScreen from '../screens/ProviderDashboardScreen';
 import CreateVenueScreen from '../screens/CreateVenueScreen';
@@ -156,6 +157,7 @@ export default function Navigation() {
                 <Stack.Screen name="Booking" component={BookingScreen} />
               </>
             )}
+            <Stack.Screen name="EditProfile" component={EditProfileScreen} />
           </>
         )}
       </Stack.Navigator>

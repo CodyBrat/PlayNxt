@@ -11,11 +11,13 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
 import { useApp } from '../context/AppContext';
 import theme from '../theme/theme';
 
 export default function ProfileScreen() {
+    const navigation = useNavigation();
     const { user: authUser, logout } = useAuth();
     const { state } = useApp();
     const user = authUser || state.user;
@@ -49,7 +51,7 @@ export default function ProfileScreen() {
             icon: 'account-edit-outline',
             label: 'Edit Profile',
             color: theme.colors.text,
-            onPress: () => { },
+            onPress: () => navigation.navigate('EditProfile'),
         },
         {
             id: '2',
@@ -85,7 +87,7 @@ export default function ProfileScreen() {
                 <SafeAreaView edges={['top']}>
                     <View style={styles.header}>
                         <Text style={styles.headerTitle}>Profile</Text>
-                        <TouchableOpacity style={styles.editButton}>
+                        <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('EditProfile')}>
                             <MaterialCommunityIcons
                                 name="pencil-outline"
                                 size={20}
