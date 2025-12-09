@@ -3,9 +3,11 @@ import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import { getToken } from '../utils/storage';
 
+const USE_PRODUCTION = true; // Set to false to use localhost
+
 const getApiUrl = () => {
-    if (!__DEV__) {
-        return 'https://your-production-api.com/api';
+    if (USE_PRODUCTION || !__DEV__) {
+        return 'https://playnxt.onrender.com/api';
     }
 
     const expoConfig = Constants.expoConfig;
