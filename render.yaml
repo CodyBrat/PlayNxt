@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: playnxt-backend
+    env: node
+    plan: free
+    region: singapore # Detailed control available in dashboard if needed
+    rootDirectory: backend
+    buildCommand: npm install && npx prisma generate
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        sync: false # User must provide this in dashboard
+      - key: JWT_SECRET
+        sync: false
+      - key: PORT
+        value: 10000
