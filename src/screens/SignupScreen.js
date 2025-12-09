@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     View,
     Text,
@@ -10,6 +10,7 @@ import {
     ScrollView,
     ActivityIndicator,
     Alert,
+    Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -27,6 +28,43 @@ export default function SignupScreen({ navigation }) {
     const [showPassword, setShowPassword] = useState(false);
     const [role, setRole] = useState('USER');
     const [isLoading, setIsLoading] = useState(false);
+    const [focusedField, setFocusedField] = useState(null);
+
+    // Animation values
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+    const slideAnim = useRef(new Animated.Value(40)).current;
+    const roleScale = useRef(new Animated.Value(1)).current;
+
+    useEffect(() => {
+        // Entrance animations
+        Animated.parallel([
+            Animated.timing(fadeAnim, {
+                toValue: 1,
+                duration: theme.animation.timing.slow,
+                useNativeDriver: true,
+            }),
+            Animated.timing(slideAnim, {
+                toValue: 0,
+                duration: theme.animation.timing.slow,
+                useNativeDriver: true,
+            }),
+        ]).start();
+    }, []);
+
+    const animateRoleChange = () => {
+        Animated.sequence([
+            Animated.timing(roleScale, {
+                toValue: 0.95,
+                duration: theme.animation.timing.fast,
+                useNativeDriver: true,
+            }),
+            Animated.spring(roleScale, {
+                toValue: 1,
+                ...theme.animation.spring.bouncy,
+                useNativeDriver: true,
+            }),
+        ]).start();
+    };
 
     const handleSignup = async () => {
         if (!name || !email || !password) {
@@ -65,20 +103,41 @@ export default function SignupScreen({ navigation }) {
         }
     };
 
+    const handleRoleChange = (newRole) => {
+        setRole(newRole);
+        animateRoleChange();
+    };
+
+    const getInputStyle = (fieldName) => [
+        styles.inputContainer,
+        focusedField === fieldName && styles.inputContainerFocused
+    ];
+
     return (
         <View style={styles.container}>
-            <SafeAreaView edges={['top']} style={styles.safeArea}>
-                <TouchableOpacity
-                    style={styles.backButton}
-                    onPress={() => navigation.goBack()}
-                >
-                    <MaterialCommunityIcons
-                        name="arrow-left"
-                        size={24}
-                        color={theme.colors.text}
-                    />
-                </TouchableOpacity>
-            </SafeAreaView>
+            {/* Header with Gradient */}
+            <LinearGradient
+                colors={theme.gradients.header}
+                style={styles.headerGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+            >
+                <SafeAreaView edges={['top']}>
+                    <View style={styles.headerContent}>
+                        <TouchableOpacity
+                            style={styles.backButton}
+                            onPress={() => navigation.goBack()}
+                        >
+                            <MaterialCommunityIcons
+                                name="arrow-left"
+                                size={24}
+                                color={theme.colors.secondary}
+                            />
+                        </TouchableOpacity>
+                        <Text style={styles.headerTitle}>Create Account</Text>
+                    </View>
+                </SafeAreaView>
+            </LinearGradient>
 
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -89,8 +148,15 @@ export default function SignupScreen({ navigation }) {
                     showsVerticalScrollIndicator={false}
                     keyboardShouldPersistTaps="handled"
                 >
-                    <View style={styles.formContainer}>
-                        <Text style={styles.title}>Create Account</Text>
+                    <Animated.View
+                        style={[
+                            styles.formContainer,
+                            {
+                                opacity: fadeAnim,
+                                transform: [{ translateY: slideAnim }],
+                            }
+                        ]}
+                    >
                         <Text style={styles.subtitle}>
                             Sign up to start booking amazing turfs
                         </Text>
@@ -98,10 +164,15 @@ export default function SignupScreen({ navigation }) {
                         {/* Role Selection */}
                         <View style={styles.roleContainer}>
                             <Text style={styles.roleLabel}>I am a:</Text>
-                            <View style={styles.roleButtons}>
+                            <Animated.View
+                                style={[
+                                    styles.roleButtons,
+                                    { transform: [{ scale: roleScale }] }
+                                ]}
+                            >
                                 <TouchableOpacity
                                     style={[styles.roleButton, role === 'USER' && styles.roleButtonActive]}
-                                    onPress={() => setRole('USER')}
+                                    onPress={() => handleRoleChange('USER')}
                                     activeOpacity={0.7}
                                 >
                                     <MaterialCommunityIcons
@@ -115,7 +186,7 @@ export default function SignupScreen({ navigation }) {
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     style={[styles.roleButton, role === 'PROVIDER' && styles.roleButtonActive]}
-                                    onPress={() => setRole('PROVIDER')}
+                                    onPress={() => handleRoleChange('PROVIDER')}
                                     activeOpacity={0.7}
                                 >
                                     <MaterialCommunityIcons
@@ -127,15 +198,15 @@ export default function SignupScreen({ navigation }) {
                                         Turf Owner
                                     </Text>
                                 </TouchableOpacity>
-                            </View>
+                            </Animated.View>
                         </View>
 
                         {/* Name Input */}
-                        <View style={styles.inputContainer}>
+                        <View style={getInputStyle('name')}>
                             <MaterialCommunityIcons
                                 name="account-outline"
                                 size={20}
-                                color={theme.colors.textSecondary}
+                                color={focusedField === 'name' ? theme.colors.primaryAccent : theme.colors.textSecondary}
                                 style={styles.inputIcon}
                             />
                             <TextInput
@@ -145,15 +216,17 @@ export default function SignupScreen({ navigation }) {
                                 value={name}
                                 onChangeText={setName}
                                 autoCapitalize="words"
+                                onFocus={() => setFocusedField('name')}
+                                onBlur={() => setFocusedField(null)}
                             />
                         </View>
 
                         {/* Email Input */}
-                        <View style={styles.inputContainer}>
+                        <View style={getInputStyle('email')}>
                             <MaterialCommunityIcons
                                 name="email-outline"
                                 size={20}
-                                color={theme.colors.textSecondary}
+                                color={focusedField === 'email' ? theme.colors.primaryAccent : theme.colors.textSecondary}
                                 style={styles.inputIcon}
                             />
                             <TextInput
@@ -165,15 +238,17 @@ export default function SignupScreen({ navigation }) {
                                 keyboardType="email-address"
                                 autoCapitalize="none"
                                 autoCorrect={false}
+                                onFocus={() => setFocusedField('email')}
+                                onBlur={() => setFocusedField(null)}
                             />
                         </View>
 
                         {/* Phone Input */}
-                        <View style={styles.inputContainer}>
+                        <View style={getInputStyle('phone')}>
                             <MaterialCommunityIcons
                                 name="phone-outline"
                                 size={20}
-                                color={theme.colors.textSecondary}
+                                color={focusedField === 'phone' ? theme.colors.primaryAccent : theme.colors.textSecondary}
                                 style={styles.inputIcon}
                             />
                             <TextInput
@@ -183,15 +258,17 @@ export default function SignupScreen({ navigation }) {
                                 value={phone}
                                 onChangeText={setPhone}
                                 keyboardType="phone-pad"
+                                onFocus={() => setFocusedField('phone')}
+                                onBlur={() => setFocusedField(null)}
                             />
                         </View>
 
                         {/* Password Input */}
-                        <View style={styles.inputContainer}>
+                        <View style={getInputStyle('password')}>
                             <MaterialCommunityIcons
                                 name="lock-outline"
                                 size={20}
-                                color={theme.colors.textSecondary}
+                                color={focusedField === 'password' ? theme.colors.primaryAccent : theme.colors.textSecondary}
                                 style={styles.inputIcon}
                             />
                             <TextInput
@@ -202,6 +279,8 @@ export default function SignupScreen({ navigation }) {
                                 onChangeText={setPassword}
                                 secureTextEntry={!showPassword}
                                 autoCapitalize="none"
+                                onFocus={() => setFocusedField('password')}
+                                onBlur={() => setFocusedField(null)}
                             />
                             <TouchableOpacity
                                 onPress={() => setShowPassword(!showPassword)}
@@ -216,11 +295,11 @@ export default function SignupScreen({ navigation }) {
                         </View>
 
                         {/* Confirm Password Input */}
-                        <View style={styles.inputContainer}>
+                        <View style={getInputStyle('confirmPassword')}>
                             <MaterialCommunityIcons
                                 name="lock-check-outline"
                                 size={20}
-                                color={theme.colors.textSecondary}
+                                color={focusedField === 'confirmPassword' ? theme.colors.primaryAccent : theme.colors.textSecondary}
                                 style={styles.inputIcon}
                             />
                             <TextInput
@@ -231,6 +310,8 @@ export default function SignupScreen({ navigation }) {
                                 onChangeText={setConfirmPassword}
                                 secureTextEntry={!showPassword}
                                 autoCapitalize="none"
+                                onFocus={() => setFocusedField('confirmPassword')}
+                                onBlur={() => setFocusedField(null)}
                             />
                         </View>
 
@@ -245,7 +326,7 @@ export default function SignupScreen({ navigation }) {
                             activeOpacity={0.8}
                         >
                             <LinearGradient
-                                colors={[theme.colors.primary, theme.colors.primaryDark]}
+                                colors={theme.gradients.button}
                                 style={styles.signupButtonGradient}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 0 }}
@@ -272,7 +353,7 @@ export default function SignupScreen({ navigation }) {
                                 <Text style={styles.loginLink}>Login</Text>
                             </TouchableOpacity>
                         </View>
-                    </View>
+                    </Animated.View>
                 </ScrollView>
             </KeyboardAvoidingView>
         </View>
@@ -284,19 +365,28 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: theme.colors.background,
     },
-    safeArea: {
-        backgroundColor: theme.colors.background,
+    headerGradient: {
+        paddingBottom: theme.spacing.lg,
+    },
+    headerContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: theme.spacing.base,
+        paddingTop: theme.spacing.sm,
+        gap: theme.spacing.md,
     },
     backButton: {
-        width: 40,
-        height: 40,
+        width: 44,
+        height: 44,
         borderRadius: theme.borderRadius.md,
-        backgroundColor: theme.colors.surface,
+        backgroundColor: 'rgba(26, 29, 41, 0.15)',
         alignItems: 'center',
         justifyContent: 'center',
-        marginLeft: theme.spacing.base,
-        marginTop: theme.spacing.sm,
-        ...theme.shadows.sm,
+    },
+    headerTitle: {
+        fontSize: theme.fontSizes['2xl'],
+        fontFamily: theme.fonts.bold,
+        color: theme.colors.secondary,
     },
     keyboardView: {
         flex: 1,
@@ -308,19 +398,14 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: theme.spacing.xl,
         paddingTop: theme.spacing.lg,
-    },
-    title: {
-        fontSize: theme.fontSizes['3xl'],
-        fontFamily: theme.fonts.bold,
-        color: theme.colors.text,
-        marginBottom: theme.spacing.sm,
+        paddingBottom: theme.spacing.xl,
     },
     subtitle: {
         fontSize: theme.fontSizes.base,
         fontFamily: theme.fonts.regular,
         color: theme.colors.textSecondary,
         marginBottom: theme.spacing.xl,
-        lineHeight: 22,
+        lineHeight: 24,
     },
     inputContainer: {
         flexDirection: 'row',
@@ -329,7 +414,13 @@ const styles = StyleSheet.create({
         borderRadius: theme.borderRadius.lg,
         marginBottom: theme.spacing.base,
         paddingHorizontal: theme.spacing.base,
+        borderWidth: 2,
+        borderColor: 'transparent',
         ...theme.shadows.sm,
+    },
+    inputContainerFocused: {
+        borderColor: theme.colors.primaryAccent,
+        ...theme.shadows.md,
     },
     inputIcon: {
         marginRight: theme.spacing.md,
@@ -355,7 +446,7 @@ const styles = StyleSheet.create({
         borderRadius: theme.borderRadius.lg,
         overflow: 'hidden',
         marginBottom: theme.spacing.xl,
-        ...theme.shadows.md,
+        ...theme.shadows.lg,
     },
     signupButtonDisabled: {
         opacity: 0.6,
@@ -386,7 +477,7 @@ const styles = StyleSheet.create({
     loginLink: {
         fontSize: theme.fontSizes.base,
         fontFamily: theme.fonts.semiBold,
-        color: theme.colors.primary,
+        color: theme.colors.primaryAccent,
     },
     roleContainer: {
         marginBottom: theme.spacing.xl,
@@ -411,12 +502,13 @@ const styles = StyleSheet.create({
         borderRadius: theme.borderRadius.lg,
         backgroundColor: theme.colors.surface,
         borderWidth: 2,
-        borderColor: 'transparent',
+        borderColor: theme.colors.border,
         ...theme.shadows.sm,
     },
     roleButtonActive: {
         backgroundColor: theme.colors.primary,
         borderColor: theme.colors.primary,
+        ...theme.shadows.md,
     },
     roleButtonText: {
         fontSize: theme.fontSizes.base,

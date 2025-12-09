@@ -236,10 +236,10 @@ const styles = StyleSheet.create({
     },
     bookingCard: {
         backgroundColor: theme.colors.surface,
-        borderRadius: theme.borderRadius.lg,
+        borderRadius: theme.borderRadius.xl,
         padding: theme.spacing.base,
         marginBottom: theme.spacing.md,
-        ...theme.shadows.sm,
+        ...theme.shadows.md,
     },
     bookingHeader: {
         flexDirection: 'row',
@@ -307,8 +307,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         gap: theme.spacing.xs,
         backgroundColor: theme.colors.primary,
-        paddingVertical: theme.spacing.sm,
-        borderRadius: theme.borderRadius.md,
+        paddingVertical: theme.spacing.md,
+        borderRadius: theme.borderRadius.lg,
         marginTop: theme.spacing.sm,
     },
     callButtonText: {

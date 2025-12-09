@@ -121,7 +121,7 @@ export default function ProviderDashboardScreen() {
     return (
         <View style={styles.container}>
             <LinearGradient
-                colors={[theme.colors.primary, theme.colors.primaryDark]}
+                colors={theme.gradients.header}
                 style={styles.headerGradient}
             >
                 <SafeAreaView edges={['top']}>
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     },
     seeAll: {
         fontSize: theme.fontSizes.sm,
-        color: theme.colors.primary,
+        color: theme.colors.primaryAccent,
         fontFamily: theme.fonts.semiBold,
     },
     bookingItem: {

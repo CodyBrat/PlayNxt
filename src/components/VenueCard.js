@@ -9,21 +9,18 @@ const VenueCard = ({ venue, onPress, isFavorite, onToggleFavorite }) => {
         <TouchableOpacity
             style={styles.container}
             onPress={onPress}
-            activeOpacity={0.9}
+            activeOpacity={0.8}
         >
             <View style={styles.imageContainer}>
                 <Image source={{ uri: venue.image }} style={styles.image} />
                 <LinearGradient
-                    colors={['transparent', 'rgba(0,0,0,0.7)']}
+                    colors={theme.gradients.overlay}
                     style={styles.gradient}
                 />
 
                 <TouchableOpacity
                     style={styles.favoriteButton}
-                    onPress={(e) => {
-                        e.stopPropagation();
-                        onToggleFavorite?.();
-                    }}
+                    onPress={onToggleFavorite}
                     activeOpacity={0.7}
                 >
                     <MaterialCommunityIcons
@@ -33,14 +30,14 @@ const VenueCard = ({ venue, onPress, isFavorite, onToggleFavorite }) => {
                     />
                 </TouchableOpacity>
 
-                <View style={styles.ratingBadge}>
-                    <MaterialCommunityIcons name="star" size={12} color="#FFB800" />
-                    <Text style={styles.rating}>{venue.rating.toFixed(1)}</Text>
-                </View>
-
-                <View style={styles.typeChip}>
+                <LinearGradient
+                    colors={theme.gradients.button}
+                    style={styles.typeChip}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                >
                     <Text style={styles.typeText}>{venue.type}</Text>
-                </View>
+                </LinearGradient>
             </View>
 
             <View style={styles.content}>
@@ -65,13 +62,20 @@ const VenueCard = ({ venue, onPress, isFavorite, onToggleFavorite }) => {
                             <Text style={styles.priceUnit}>/{venue.priceUnit}</Text>
                         </Text>
                     </View>
-                    <View style={styles.bookButton}>
-                        <Text style={styles.bookButtonText}>Book Now</Text>
-                        <MaterialCommunityIcons
-                            name="arrow-right"
-                            size={16}
-                            color={theme.colors.secondary}
-                        />
+                    <View style={styles.bookButtonWrapper}>
+                        <LinearGradient
+                            colors={theme.gradients.button}
+                            style={styles.bookButton}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
+                        >
+                            <Text style={styles.bookButtonText}>Book Now</Text>
+                            <MaterialCommunityIcons
+                                name="arrow-right"
+                                size={16}
+                                color={theme.colors.secondary}
+                            />
+                        </LinearGradient>
                     </View>
                 </View>
             </View>
@@ -103,19 +107,19 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        height: '50%',
+        height: '60%',
     },
     favoriteButton: {
         position: 'absolute',
         top: theme.spacing.md,
         right: theme.spacing.md,
-        width: 40,
-        height: 40,
+        width: 44,
+        height: 44,
         borderRadius: theme.borderRadius.full,
-        backgroundColor: 'rgba(255, 255, 255, 0.25)',
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
         alignItems: 'center',
         justifyContent: 'center',
-        borderWidth: 1,
+        borderWidth: 1.5,
         borderColor: 'rgba(255, 255, 255, 0.3)',
     },
     ratingBadge: {
@@ -132,23 +136,24 @@ const styles = StyleSheet.create({
         ...theme.shadows.sm,
     },
     rating: {
-        fontSize: 11,
-        fontFamily: theme.fonts.semiBold,
+        fontSize: 12,
+        fontFamily: theme.fonts.bold,
         color: theme.colors.text,
     },
     typeChip: {
         position: 'absolute',
         bottom: theme.spacing.md,
         left: theme.spacing.md,
-        backgroundColor: theme.colors.primary,
         paddingHorizontal: theme.spacing.md,
         paddingVertical: 6,
         borderRadius: theme.borderRadius.md,
     },
     typeText: {
         fontSize: theme.fontSizes.xs,
-        fontFamily: theme.fonts.semiBold,
+        fontFamily: theme.fonts.bold,
         color: theme.colors.secondary,
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
     },
     content: {
         padding: theme.spacing.base,
@@ -179,9 +184,11 @@ const styles = StyleSheet.create({
     },
     priceLabel: {
         fontSize: theme.fontSizes.xs,
-        fontFamily: theme.fonts.regular,
+        fontFamily: theme.fonts.medium,
         color: theme.colors.textLight,
         marginBottom: 2,
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
     },
     price: {
         fontSize: theme.fontSizes.xl,
@@ -193,18 +200,21 @@ const styles = StyleSheet.create({
         fontFamily: theme.fonts.regular,
         color: theme.colors.textSecondary,
     },
+    bookButtonWrapper: {
+        borderRadius: theme.borderRadius.lg,
+        overflow: 'hidden',
+        ...theme.shadows.md,
+    },
     bookButton: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: 4,
-        backgroundColor: theme.colors.primary,
         paddingHorizontal: theme.spacing.base,
-        paddingVertical: theme.spacing.sm,
-        borderRadius: theme.borderRadius.md,
+        paddingVertical: theme.spacing.md,
     },
     bookButtonText: {
         fontSize: theme.fontSizes.sm,
-        fontFamily: theme.fonts.semiBold,
+        fontFamily: theme.fonts.bold,
         color: theme.colors.secondary,
     },
 });

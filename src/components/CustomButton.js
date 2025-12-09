@@ -5,8 +5,8 @@ import theme from '../theme/theme';
 const CustomButton = ({
     title,
     onPress,
-    variant = 'primary', 
-    size = 'medium', 
+    variant = 'primary',
+    size = 'medium',
     disabled = false,
     loading = false,
     style,
@@ -54,7 +54,7 @@ const CustomButton = ({
         >
             {loading ? (
                 <ActivityIndicator
-                    color={variant === 'primary' ? theme.colors.secondary : theme.colors.primary}
+                    color={variant === 'primary' ? theme.colors.secondary : theme.colors.primaryAccent}
                 />
             ) : (
                 <>
@@ -68,22 +68,21 @@ const CustomButton = ({
 
 const styles = StyleSheet.create({
     button: {
-        borderRadius: theme.borderRadius.md,
+        borderRadius: theme.borderRadius.lg,
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
     },
 
-    
     small: {
         paddingVertical: theme.spacing.sm,
         paddingHorizontal: theme.spacing.base,
-        minHeight: 36,
+        minHeight: 40,
     },
     medium: {
         paddingVertical: theme.spacing.md,
         paddingHorizontal: theme.spacing.lg,
-        minHeight: 48,
+        minHeight: 50,
     },
     large: {
         paddingVertical: theme.spacing.base,
@@ -91,36 +90,33 @@ const styles = StyleSheet.create({
         minHeight: 56,
     },
 
-    
     primaryButton: {
         backgroundColor: theme.colors.primary,
-        ...theme.shadows.sm,
+        ...theme.shadows.md,
     },
     outlineButton: {
         backgroundColor: 'transparent',
-        borderWidth: 1.5,
-        borderColor: theme.colors.primary,
+        borderWidth: 2,
+        borderColor: theme.colors.primaryAccent,
     },
     textButton: {
         backgroundColor: 'transparent',
     },
 
-    
     buttonText: {
         fontSize: theme.fontSizes.base,
-        fontFamily: theme.fonts.semiBold,
+        fontFamily: theme.fonts.bold,
     },
     primaryText: {
         color: theme.colors.secondary,
     },
     outlineText: {
-        color: theme.colors.primary,
+        color: theme.colors.primaryAccent,
     },
     textButtonText: {
-        color: theme.colors.primary,
+        color: theme.colors.primaryAccent,
     },
 
-    
     disabled: {
         opacity: 0.5,
     },

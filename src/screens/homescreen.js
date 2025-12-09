@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
+  Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -30,6 +31,33 @@ export default function HomeScreen() {
   } = useApp();
 
   const [refreshing, setRefreshing] = useState(false);
+
+  // Animation values
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const headerSlide = useRef(new Animated.Value(-20)).current;
+  const contentSlide = useRef(new Animated.Value(30)).current;
+
+  useEffect(() => {
+    // Entrance animations
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: theme.animation.timing.slow,
+        useNativeDriver: true,
+      }),
+      Animated.timing(headerSlide, {
+        toValue: 0,
+        duration: theme.animation.timing.normal,
+        useNativeDriver: true,
+      }),
+      Animated.timing(contentSlide, {
+        toValue: 0,
+        duration: theme.animation.timing.slow,
+        delay: 150,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -58,27 +86,45 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Header with Gradient */}
+      {/* Header with Enhanced Gradient */}
       <LinearGradient
-        colors={[theme.colors.primary, theme.colors.primaryDark]}
+        colors={theme.gradients.header}
         style={styles.headerGradient}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
       >
         <SafeAreaView edges={['top']}>
-          <View style={styles.header}>
+          <Animated.View
+            style={[
+              styles.header,
+              {
+                opacity: fadeAnim,
+                transform: [{ translateY: headerSlide }],
+              }
+            ]}
+          >
             <View>
-              <Text style={styles.greeting}>Hello 👋</Text>
+              <Text style={styles.greeting}>Hello !</Text>
               <Text style={styles.headerTitle}>Find Your Perfect Turf</Text>
             </View>
-          </View>
+          </Animated.View>
 
           {/* Search Bar */}
-          <View style={styles.searchSection}>
+          <Animated.View
+            style={[
+              styles.searchSection,
+              {
+                opacity: fadeAnim,
+                transform: [{ translateY: headerSlide }],
+              }
+            ]}
+          >
             <SearchBar
               value={state.searchQuery}
               onChangeText={setSearchQuery}
               placeholder="Search turfs, locations..."
             />
-          </View>
+          </Animated.View>
         </SafeAreaView>
       </LinearGradient>
 
@@ -86,11 +132,24 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={theme.colors.primaryAccent}
+            colors={[theme.colors.primaryAccent]}
+          />
         }
       >
         {/* Sport Categories */}
-        <View style={styles.section}>
+        <Animated.View
+          style={[
+            styles.section,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: contentSlide }],
+            }
+          ]}
+        >
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Sport Categories</Text>
             {state.selectedSport && (
@@ -113,30 +172,54 @@ export default function HomeScreen() {
               />
             ))}
           </ScrollView>
-        </View>
+        </Animated.View>
 
         {/* Turfs Near You */}
-        <View style={styles.section}>
+        <Animated.View
+          style={[
+            styles.section,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: contentSlide }],
+            }
+          ]}
+        >
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>
               {state.selectedSport ? `${state.selectedSport} Venues` : 'Venues Near You'}
             </Text>
-            <Text style={styles.countText}>{filteredVenues.length} found</Text>
+            <View style={styles.countBadge}>
+              <Text style={styles.countText}>{filteredVenues.length} found</Text>
+            </View>
           </View>
 
           {filteredVenues.length > 0 ? (
-            filteredVenues.map((venue) => (
-              <VenueCard
+            filteredVenues.map((venue, index) => (
+              <Animated.View
                 key={venue.id}
-                venue={venue}
-                onPress={() => handleVenuePress(venue)}
-                isFavorite={isFavorite(venue.id)}
-                onToggleFavorite={() => toggleFavorite(venue.id)}
-              />
+                style={{
+                  opacity: fadeAnim,
+                  transform: [{
+                    translateY: contentSlide.interpolate({
+                      inputRange: [0, 30],
+                      outputRange: [0, 30 + (index * 10)],
+                    }),
+                  }],
+                }}
+              >
+                <VenueCard
+                  venue={venue}
+                  onPress={() => handleVenuePress(venue)}
+                  isFavorite={isFavorite(venue.id)}
+                  onToggleFavorite={() => toggleFavorite(venue.id)}
+                />
+              </Animated.View>
             ))
           ) : (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyIcon}>🔍</Text>
+              <View style={styles.emptyIconContainer}>
+                <Text style={styles.emptyIcon}>🔍</Text>
+              </View>
               <Text style={styles.emptyTitle}>No venues found</Text>
               <Text style={styles.emptyText}>
                 Try adjusting your filters or search query
@@ -147,12 +230,20 @@ export default function HomeScreen() {
                   setSelectedSport(null);
                   setSearchQuery('');
                 }}
+                activeOpacity={0.8}
               >
-                <Text style={styles.clearButtonText}>Clear All Filters</Text>
+                <LinearGradient
+                  colors={theme.gradients.button}
+                  style={styles.clearButtonGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                >
+                  <Text style={styles.clearButtonText}>Clear All Filters</Text>
+                </LinearGradient>
               </TouchableOpacity>
             </View>
           )}
-        </View>
+        </Animated.View>
       </ScrollView>
     </View>
   );
@@ -172,22 +263,24 @@ const styles = StyleSheet.create({
   },
   greeting: {
     fontSize: theme.fontSizes.base,
-    fontFamily: theme.fonts.regular,
+    fontFamily: theme.fonts.medium,
     color: theme.colors.secondary,
     marginBottom: 4,
+    opacity: 0.9,
   },
   headerTitle: {
     fontSize: theme.fontSizes['3xl'],
     fontFamily: theme.fonts.bold,
     color: theme.colors.secondary,
+    letterSpacing: -0.5,
   },
   searchSection: {
     paddingHorizontal: theme.spacing.base,
     paddingTop: theme.spacing.lg,
   },
   scrollContent: {
-    paddingTop: theme.spacing.base,
-    paddingBottom: theme.spacing['3xl'],
+    paddingTop: theme.spacing.lg,
+    paddingBottom: theme.spacing['4xl'],
   },
   section: {
     marginBottom: theme.spacing.xl,
@@ -204,15 +297,21 @@ const styles = StyleSheet.create({
     fontFamily: theme.fonts.bold,
     color: theme.colors.text,
   },
+  countBadge: {
+    backgroundColor: theme.colors.secondaryLight,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.borderRadius.full,
+  },
   countText: {
-    fontSize: theme.fontSizes.sm,
-    fontFamily: theme.fonts.medium,
-    color: theme.colors.textSecondary,
+    fontSize: theme.fontSizes.xs,
+    fontFamily: theme.fonts.semiBold,
+    color: theme.colors.surface,
   },
   clearText: {
     fontSize: theme.fontSizes.sm,
     fontFamily: theme.fonts.semiBold,
-    color: theme.colors.primary,
+    color: theme.colors.primaryAccent,
   },
   categoriesContainer: {
     paddingHorizontal: theme.spacing.base,
@@ -221,15 +320,24 @@ const styles = StyleSheet.create({
   emptyState: {
     alignItems: 'center',
     paddingVertical: theme.spacing['4xl'],
-    paddingHorizontal: theme.spacing.base,
+    paddingHorizontal: theme.spacing.xl,
+  },
+  emptyIconContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: theme.borderRadius.full,
+    backgroundColor: theme.colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: theme.spacing.lg,
+    ...theme.shadows.md,
   },
   emptyIcon: {
-    fontSize: 64,
-    marginBottom: theme.spacing.base,
+    fontSize: 48,
   },
   emptyTitle: {
     fontSize: theme.fontSizes.xl,
-    fontFamily: theme.fonts.semiBold,
+    fontFamily: theme.fonts.bold,
     color: theme.colors.text,
     marginBottom: theme.spacing.sm,
   },
@@ -238,13 +346,17 @@ const styles = StyleSheet.create({
     fontFamily: theme.fonts.regular,
     color: theme.colors.textSecondary,
     textAlign: 'center',
-    marginBottom: theme.spacing.lg,
+    marginBottom: theme.spacing.xl,
+    lineHeight: 22,
   },
   clearButton: {
-    backgroundColor: theme.colors.primary,
+    borderRadius: theme.borderRadius.lg,
+    overflow: 'hidden',
+    ...theme.shadows.md,
+  },
+  clearButtonGradient: {
     paddingHorizontal: theme.spacing.xl,
     paddingVertical: theme.spacing.md,
-    borderRadius: theme.borderRadius.md,
   },
   clearButtonText: {
     fontSize: theme.fontSizes.base,

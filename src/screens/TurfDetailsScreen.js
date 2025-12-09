@@ -57,15 +57,10 @@ export default function TurfDetailsScreen() {
                 <View style={styles.imageContainer}>
                     <Image source={{ uri: venue.image }} style={styles.image} />
                     <LinearGradient
-                        colors={['transparent', 'rgba(0,0,0,0.6)']}
+                        colors={['transparent', 'rgba(0,0,0,0.4)', 'rgba(0,0,0,0.8)']}
                         style={styles.imageGradient}
                     />
                     <View style={styles.imageOverlay}>
-                        <View style={styles.ratingBadge}>
-                            <MaterialCommunityIcons name="star" size={16} color="#FFB800" />
-                            <Text style={styles.ratingText}>{venue.rating.toFixed(1)}</Text>
-                            <Text style={styles.reviewsText}>({venue.reviews} reviews)</Text>
-                        </View>
                     </View>
                 </View>
 
@@ -342,7 +337,7 @@ const styles = StyleSheet.create({
     price: {
         fontSize: theme.fontSizes['2xl'],
         fontFamily: theme.fonts.bold,
-        color: theme.colors.primary,
+        color: theme.colors.primaryAccent,
     },
     priceUnit: {
         fontSize: theme.fontSizes.sm,
@@ -441,8 +436,8 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.primary,
         paddingHorizontal: theme.spacing.xl,
         paddingVertical: theme.spacing.md,
-        borderRadius: theme.borderRadius.md,
-        ...theme.shadows.md,
+        borderRadius: theme.borderRadius.lg,
+        ...theme.shadows.lg,
     },
     bookNowText: {
         fontSize: theme.fontSizes.base,

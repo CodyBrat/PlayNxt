@@ -217,8 +217,8 @@ const styles = StyleSheet.create({
     changePhotoText: {
         marginTop: theme.spacing.sm,
         fontSize: theme.fontSizes.sm,
-        fontFamily: theme.fonts.medium,
-        color: theme.colors.primary,
+        fontFamily: theme.fonts.semiBold,
+        color: theme.colors.primaryAccent,
     },
     form: {
         gap: theme.spacing.lg,
@@ -233,9 +233,9 @@ const styles = StyleSheet.create({
     },
     input: {
         backgroundColor: theme.colors.surface,
-        padding: theme.spacing.md,
-        borderRadius: theme.borderRadius.md,
-        borderWidth: 1,
+        padding: theme.spacing.base,
+        borderRadius: theme.borderRadius.lg,
+        borderWidth: 2,
         borderColor: theme.colors.border,
         fontSize: theme.fontSizes.base,
         fontFamily: theme.fonts.regular,

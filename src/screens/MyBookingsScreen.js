@@ -150,7 +150,7 @@ export default function MyBookingsScreen() {
     <View style={styles.container}>
       {/* Header */}
       <LinearGradient
-        colors={[theme.colors.primary, theme.colors.primaryDark]}
+        colors={theme.gradients.header}
         style={styles.headerGradient}
       >
         <SafeAreaView edges={['top']}>
@@ -434,8 +434,8 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
     paddingHorizontal: theme.spacing.xl,
     paddingVertical: theme.spacing.md,
-    borderRadius: theme.borderRadius.md,
-    ...theme.shadows.md,
+    borderRadius: theme.borderRadius.lg,
+    ...theme.shadows.lg,
   },
   exploreButtonText: {
     fontSize: theme.fontSizes.base,

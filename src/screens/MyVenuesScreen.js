@@ -295,8 +295,8 @@ const styles = StyleSheet.create({
     },
     venueTagText: {
         fontSize: theme.fontSizes.xs,
-        color: theme.colors.primary,
-        fontFamily: theme.fonts.semiBold,
+        color: theme.colors.primaryAccent,
+        fontFamily: theme.fonts.bold,
     },
     venueFooter: {
         flexDirection: 'row',
@@ -329,8 +329,8 @@ const styles = StyleSheet.create({
     },
     viewBookingsText: {
         fontSize: theme.fontSizes.sm,
-        color: theme.colors.primary,
-        fontFamily: theme.fonts.semiBold,
+        color: theme.colors.primaryAccent,
+        fontFamily: theme.fonts.bold,
     },
     emptyState: {
         alignItems: 'center',

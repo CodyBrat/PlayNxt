@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     View,
     Text,
@@ -10,6 +10,7 @@ import {
     ScrollView,
     ActivityIndicator,
     Alert,
+    Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -23,6 +24,41 @@ export default function LoginScreen({ navigation }) {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [emailFocused, setEmailFocused] = useState(false);
+    const [passwordFocused, setPasswordFocused] = useState(false);
+
+    // Animation values
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+    const slideAnim = useRef(new Animated.Value(30)).current;
+    const logoScale = useRef(new Animated.Value(0.8)).current;
+    const formSlide = useRef(new Animated.Value(50)).current;
+
+    useEffect(() => {
+        // Entrance animations
+        Animated.parallel([
+            Animated.timing(fadeAnim, {
+                toValue: 1,
+                duration: theme.animation.timing.slow,
+                useNativeDriver: true,
+            }),
+            Animated.spring(logoScale, {
+                toValue: 1,
+                ...theme.animation.spring.bouncy,
+                useNativeDriver: true,
+            }),
+            Animated.timing(slideAnim, {
+                toValue: 0,
+                duration: theme.animation.timing.normal,
+                useNativeDriver: true,
+            }),
+            Animated.timing(formSlide, {
+                toValue: 0,
+                duration: theme.animation.timing.slow,
+                delay: 150,
+                useNativeDriver: true,
+            }),
+        ]).start();
+    }, []);
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -42,19 +78,34 @@ export default function LoginScreen({ navigation }) {
     return (
         <View style={styles.container}>
             <LinearGradient
-                colors={[theme.colors.primary, theme.colors.primaryDark]}
+                colors={theme.gradients.header}
                 style={styles.topGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
             >
                 <SafeAreaView edges={['top']}>
-                    <View style={styles.header}>
-                        <MaterialCommunityIcons
-                            name="soccer-field"
-                            size={60}
-                            color={theme.colors.secondary}
-                        />
+                    <Animated.View
+                        style={[
+                            styles.header,
+                            {
+                                opacity: fadeAnim,
+                                transform: [
+                                    { scale: logoScale },
+                                    { translateY: slideAnim }
+                                ],
+                            }
+                        ]}
+                    >
+                        <View style={styles.logoContainer}>
+                            <MaterialCommunityIcons
+                                name="soccer-field"
+                                size={60}
+                                color={theme.colors.secondary}
+                            />
+                        </View>
                         <Text style={styles.logo}>PlayNxt</Text>
                         <Text style={styles.tagline}>Find Your Perfect Turf</Text>
-                    </View>
+                    </Animated.View>
                 </SafeAreaView>
             </LinearGradient>
 
@@ -67,18 +118,29 @@ export default function LoginScreen({ navigation }) {
                     showsVerticalScrollIndicator={false}
                     keyboardShouldPersistTaps="handled"
                 >
-                    <View style={styles.formContainer}>
+                    <Animated.View
+                        style={[
+                            styles.formContainer,
+                            {
+                                opacity: fadeAnim,
+                                transform: [{ translateY: formSlide }],
+                            }
+                        ]}
+                    >
                         <Text style={styles.title}>Welcome Back!</Text>
                         <Text style={styles.subtitle}>
                             Login to continue booking your favorite turfs
                         </Text>
 
                         {/* Email Input */}
-                        <View style={styles.inputContainer}>
+                        <View style={[
+                            styles.inputContainer,
+                            emailFocused && styles.inputContainerFocused
+                        ]}>
                             <MaterialCommunityIcons
                                 name="email-outline"
                                 size={20}
-                                color={theme.colors.textSecondary}
+                                color={emailFocused ? theme.colors.primaryAccent : theme.colors.textSecondary}
                                 style={styles.inputIcon}
                             />
                             <TextInput
@@ -90,15 +152,20 @@ export default function LoginScreen({ navigation }) {
                                 keyboardType="email-address"
                                 autoCapitalize="none"
                                 autoCorrect={false}
+                                onFocus={() => setEmailFocused(true)}
+                                onBlur={() => setEmailFocused(false)}
                             />
                         </View>
 
                         {/* Password Input */}
-                        <View style={styles.inputContainer}>
+                        <View style={[
+                            styles.inputContainer,
+                            passwordFocused && styles.inputContainerFocused
+                        ]}>
                             <MaterialCommunityIcons
                                 name="lock-outline"
                                 size={20}
-                                color={theme.colors.textSecondary}
+                                color={passwordFocused ? theme.colors.primaryAccent : theme.colors.textSecondary}
                                 style={styles.inputIcon}
                             />
                             <TextInput
@@ -109,6 +176,8 @@ export default function LoginScreen({ navigation }) {
                                 onChangeText={setPassword}
                                 secureTextEntry={!showPassword}
                                 autoCapitalize="none"
+                                onFocus={() => setPasswordFocused(true)}
+                                onBlur={() => setPasswordFocused(false)}
                             />
                             <TouchableOpacity
                                 onPress={() => setShowPassword(!showPassword)}
@@ -135,7 +204,7 @@ export default function LoginScreen({ navigation }) {
                             activeOpacity={0.8}
                         >
                             <LinearGradient
-                                colors={[theme.colors.primary, theme.colors.primaryDark]}
+                                colors={theme.gradients.button}
                                 style={styles.loginButtonGradient}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 0 }}
@@ -162,7 +231,7 @@ export default function LoginScreen({ navigation }) {
                                 <Text style={styles.signupLink}>Sign Up</Text>
                             </TouchableOpacity>
                         </View>
-                    </View>
+                    </Animated.View>
                 </ScrollView>
             </KeyboardAvoidingView>
         </View>
@@ -179,19 +248,29 @@ const styles = StyleSheet.create({
     },
     header: {
         alignItems: 'center',
-        paddingTop: theme.spacing.lg,
+        paddingTop: theme.spacing.xl,
+    },
+    logoContainer: {
+        width: 100,
+        height: 100,
+        borderRadius: theme.borderRadius.full,
+        backgroundColor: 'rgba(26, 29, 41, 0.1)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: theme.spacing.sm,
     },
     logo: {
         fontSize: theme.fontSizes['4xl'],
         fontFamily: theme.fonts.bold,
         color: theme.colors.secondary,
-        marginTop: theme.spacing.md,
+        marginTop: theme.spacing.sm,
+        letterSpacing: -1,
     },
     tagline: {
         fontSize: theme.fontSizes.base,
         fontFamily: theme.fonts.regular,
         color: theme.colors.secondary,
-        opacity: 0.9,
+        opacity: 0.85,
         marginTop: theme.spacing.xs,
     },
     keyboardView: {
@@ -203,7 +282,7 @@ const styles = StyleSheet.create({
     formContainer: {
         flex: 1,
         paddingHorizontal: theme.spacing.xl,
-        paddingTop: theme.spacing.xl,
+        paddingTop: theme.spacing['2xl'],
     },
     title: {
         fontSize: theme.fontSizes['3xl'],
@@ -215,8 +294,8 @@ const styles = StyleSheet.create({
         fontSize: theme.fontSizes.base,
         fontFamily: theme.fonts.regular,
         color: theme.colors.textSecondary,
-        marginBottom: theme.spacing.xl,
-        lineHeight: 22,
+        marginBottom: theme.spacing['2xl'],
+        lineHeight: 24,
     },
     inputContainer: {
         flexDirection: 'row',
@@ -225,7 +304,13 @@ const styles = StyleSheet.create({
         borderRadius: theme.borderRadius.lg,
         marginBottom: theme.spacing.base,
         paddingHorizontal: theme.spacing.base,
+        borderWidth: 2,
+        borderColor: 'transparent',
         ...theme.shadows.sm,
+    },
+    inputContainerFocused: {
+        borderColor: theme.colors.primaryAccent,
+        ...theme.shadows.md,
     },
     inputIcon: {
         marginRight: theme.spacing.md,
@@ -246,14 +331,14 @@ const styles = StyleSheet.create({
     },
     forgotPasswordText: {
         fontSize: theme.fontSizes.sm,
-        fontFamily: theme.fonts.medium,
-        color: theme.colors.primary,
+        fontFamily: theme.fonts.semiBold,
+        color: theme.colors.primaryAccent,
     },
     loginButton: {
         borderRadius: theme.borderRadius.lg,
         overflow: 'hidden',
         marginBottom: theme.spacing.xl,
-        ...theme.shadows.md,
+        ...theme.shadows.lg,
     },
     loginButtonDisabled: {
         opacity: 0.6,
@@ -283,6 +368,6 @@ const styles = StyleSheet.create({
     signupLink: {
         fontSize: theme.fontSizes.base,
         fontFamily: theme.fonts.semiBold,
-        color: theme.colors.primary,
+        color: theme.colors.primaryAccent,
     },
 });

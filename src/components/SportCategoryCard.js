@@ -9,12 +9,14 @@ const SportCategoryCard = ({ sport, isSelected, onPress }) => {
         <TouchableOpacity
             style={[styles.container, isSelected && styles.selected]}
             onPress={onPress}
-            activeOpacity={0.8}
+            activeOpacity={0.7}
         >
             {isSelected ? (
                 <LinearGradient
-                    colors={[theme.colors.primary, theme.colors.primaryDark]}
+                    colors={theme.gradients.primary}
                     style={styles.gradient}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
                 >
                     {sport.trending && (
                         <View style={styles.badge}>
@@ -22,11 +24,13 @@ const SportCategoryCard = ({ sport, isSelected, onPress }) => {
                         </View>
                     )}
                     <View style={styles.content}>
-                        <MaterialCommunityIcons
-                            name={sport.icon}
-                            size={36}
-                            color={theme.colors.secondary}
-                        />
+                        <View style={styles.iconContainer}>
+                            <MaterialCommunityIcons
+                                name={sport.icon}
+                                size={36}
+                                color={theme.colors.secondary}
+                            />
+                        </View>
                         <Text style={styles.nameSelected}>{sport.name}</Text>
                     </View>
                 </LinearGradient>
@@ -38,11 +42,13 @@ const SportCategoryCard = ({ sport, isSelected, onPress }) => {
                         </View>
                     )}
                     <View style={styles.content}>
-                        <MaterialCommunityIcons
-                            name={sport.icon}
-                            size={36}
-                            color={theme.colors.surface}
-                        />
+                        <View style={styles.iconContainerNormal}>
+                            <MaterialCommunityIcons
+                                name={sport.icon}
+                                size={36}
+                                color={theme.colors.surface}
+                            />
+                        </View>
                         <Text style={styles.name}>{sport.name}</Text>
                     </View>
                 </View>
@@ -54,14 +60,13 @@ const SportCategoryCard = ({ sport, isSelected, onPress }) => {
 const styles = StyleSheet.create({
     container: {
         width: 120,
-        height: 120,
+        height: 130,
         borderRadius: theme.borderRadius.xl,
         overflow: 'hidden',
         ...theme.shadows.md,
     },
     selected: {
-        ...theme.shadows.lg,
-        transform: [{ scale: 1.02 }],
+        ...theme.shadows.glow,
     },
     gradient: {
         flex: 1,
@@ -77,6 +82,23 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         gap: theme.spacing.sm,
+        paddingHorizontal: theme.spacing.sm,
+    },
+    iconContainer: {
+        width: 56,
+        height: 56,
+        borderRadius: theme.borderRadius.full,
+        backgroundColor: 'rgba(26, 29, 41, 0.15)',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    iconContainerNormal: {
+        width: 56,
+        height: 56,
+        borderRadius: theme.borderRadius.full,
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     badge: {
         position: 'absolute',
@@ -87,6 +109,7 @@ const styles = StyleSheet.create({
         paddingVertical: 3,
         borderRadius: theme.borderRadius.sm,
         zIndex: 1,
+        ...theme.shadows.sm,
     },
     badgeText: {
         fontSize: 9,

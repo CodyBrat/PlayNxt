@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
     View,
     Text,
@@ -7,6 +7,7 @@ import {
     Image,
     TouchableOpacity,
     Alert,
+    Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -22,10 +23,46 @@ export default function ProfileScreen() {
     const { state } = useApp();
     const user = authUser || state.user;
 
+    // Animation values
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+    const profileSlide = useRef(new Animated.Value(-30)).current;
+    const statsScale = useRef(new Animated.Value(0.8)).current;
+    const menuSlide = useRef(new Animated.Value(50)).current;
+
+    useEffect(() => {
+        // Entrance animations
+        Animated.parallel([
+            Animated.timing(fadeAnim, {
+                toValue: 1,
+                duration: theme.animation.timing.slow,
+                useNativeDriver: true,
+            }),
+            Animated.timing(profileSlide, {
+                toValue: 0,
+                duration: theme.animation.timing.normal,
+                useNativeDriver: true,
+            }),
+            Animated.spring(statsScale, {
+                toValue: 1,
+                delay: 200,
+                ...theme.animation.spring.bouncy,
+                useNativeDriver: true,
+            }),
+            Animated.timing(menuSlide, {
+                toValue: 0,
+                duration: theme.animation.timing.slow,
+                delay: 300,
+                useNativeDriver: true,
+            }),
+        ]).start();
+    }, []);
+
     if (!user) {
         return (
             <SafeAreaView style={styles.container}>
-                <Text>Loading...</Text>
+                <View style={styles.loadingContainer}>
+                    <Text style={styles.loadingText}>Loading...</Text>
+                </View>
             </SafeAreaView>
         );
     }
@@ -77,40 +114,127 @@ export default function ProfileScreen() {
         },
     ];
 
+    const MenuItemComponent = ({ item, index, isLast }) => {
+        const scaleAnim = useRef(new Animated.Value(1)).current;
+
+        const handlePressIn = () => {
+            Animated.spring(scaleAnim, {
+                toValue: 0.98,
+                ...theme.animation.spring.snappy,
+                useNativeDriver: true,
+            }).start();
+        };
+
+        const handlePressOut = () => {
+            Animated.spring(scaleAnim, {
+                toValue: 1,
+                ...theme.animation.spring.bouncy,
+                useNativeDriver: true,
+            }).start();
+        };
+
+        return (
+            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+                <TouchableOpacity
+                    style={[styles.menuItem, isLast && styles.menuItemLast]}
+                    onPress={item.onPress}
+                    onPressIn={handlePressIn}
+                    onPressOut={handlePressOut}
+                    activeOpacity={0.9}
+                >
+                    <View style={styles.menuLeft}>
+                        <View
+                            style={[
+                                styles.menuIconCircle,
+                                item.color === theme.colors.error && styles.menuIconCircleError,
+                            ]}
+                        >
+                            <MaterialCommunityIcons
+                                name={item.icon}
+                                size={20}
+                                color={item.color}
+                            />
+                        </View>
+                        <Text style={[styles.menuLabel, { color: item.color }]}>
+                            {item.label}
+                        </Text>
+                    </View>
+                    <View style={styles.menuRight}>
+                        {item.count !== undefined && (
+                            <LinearGradient
+                                colors={theme.gradients.button}
+                                style={styles.badge}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 0 }}
+                            >
+                                <Text style={styles.badgeText}>{item.count}</Text>
+                            </LinearGradient>
+                        )}
+                        <MaterialCommunityIcons
+                            name="chevron-right"
+                            size={20}
+                            color={theme.colors.textLight}
+                        />
+                    </View>
+                </TouchableOpacity>
+            </Animated.View>
+        );
+    };
+
     return (
         <View style={styles.container}>
-            {/* Header with Gradient */}
+            {/* Header with Enhanced Gradient */}
             <LinearGradient
-                colors={[theme.colors.primary, theme.colors.primaryDark]}
+                colors={theme.gradients.header}
                 style={styles.headerGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
             >
                 <SafeAreaView edges={['top']}>
-                    <View style={styles.header}>
+                    <Animated.View
+                        style={[
+                            styles.header,
+                            {
+                                opacity: fadeAnim,
+                            }
+                        ]}
+                    >
                         <Text style={styles.headerTitle}>Profile</Text>
-                        <TouchableOpacity style={styles.editButton} onPress={() => navigation.navigate('EditProfile')}>
+                        <TouchableOpacity
+                            style={styles.editButton}
+                            onPress={() => navigation.navigate('EditProfile')}
+                        >
                             <MaterialCommunityIcons
                                 name="pencil-outline"
                                 size={20}
                                 color={theme.colors.secondary}
                             />
                         </TouchableOpacity>
-                    </View>
+                    </Animated.View>
 
                     {/* Profile Info */}
-                    <View style={styles.profileSection}>
+                    <Animated.View
+                        style={[
+                            styles.profileSection,
+                            {
+                                opacity: fadeAnim,
+                                transform: [{ translateY: profileSlide }],
+                            }
+                        ]}
+                    >
                         <View style={styles.avatarContainer}>
                             <Image source={{ uri: user.avatar }} style={styles.avatar} />
                             <View style={styles.verifiedBadge}>
                                 <MaterialCommunityIcons
                                     name="check-decagram"
                                     size={20}
-                                    color={theme.colors.primary}
+                                    color={theme.colors.primaryAccent}
                                 />
                             </View>
                         </View>
                         <Text style={styles.name}>{user.name}</Text>
                         <Text style={styles.email}>{user.email}</Text>
-                    </View>
+                    </Animated.View>
                 </SafeAreaView>
             </LinearGradient>
 
@@ -119,76 +243,65 @@ export default function ProfileScreen() {
                 contentContainerStyle={styles.scrollContent}
             >
                 {/* Stats */}
-                <View style={styles.statsContainer}>
+                <Animated.View
+                    style={[
+                        styles.statsContainer,
+                        {
+                            opacity: fadeAnim,
+                            transform: [{ scale: statsScale }],
+                        }
+                    ]}
+                >
                     <View style={styles.statCard}>
-                        <View style={styles.statIconCircle}>
+                        <LinearGradient
+                            colors={['rgba(184, 255, 60, 0.15)', 'rgba(184, 255, 60, 0.05)']}
+                            style={styles.statIconCircle}
+                        >
                             <MaterialCommunityIcons
                                 name="calendar-check"
                                 size={24}
-                                color={theme.colors.primary}
+                                color={theme.colors.primaryAccent}
                             />
-                        </View>
+                        </LinearGradient>
                         <Text style={styles.statValue}>{user.totalBookings || 0}</Text>
                         <Text style={styles.statLabel}>Bookings</Text>
                     </View>
                     <View style={styles.statCard}>
-                        <View style={styles.statIconCircle}>
+                        <LinearGradient
+                            colors={['rgba(255, 184, 0, 0.15)', 'rgba(255, 184, 0, 0.05)']}
+                            style={styles.statIconCircle}
+                        >
                             <MaterialCommunityIcons
                                 name="trophy"
                                 size={24}
-                                color="#FFB800"
+                                color="#D49A00"
                             />
-                        </View>
+                        </LinearGradient>
                         <Text style={styles.statValue}>{user.rewardPoints || 0}</Text>
                         <Text style={styles.statLabel}>Rewards</Text>
                     </View>
-                </View>
+                </Animated.View>
 
                 {/* Menu Items */}
-                <View style={styles.menuContainer}>
+                <Animated.View
+                    style={[
+                        styles.menuContainer,
+                        {
+                            opacity: fadeAnim,
+                            transform: [{ translateY: menuSlide }],
+                        }
+                    ]}
+                >
                     <Text style={styles.menuSectionTitle}>Account</Text>
                     {menuItems.map((item, index) => (
-                        <TouchableOpacity
+                        <MenuItemComponent
                             key={item.id}
-                            style={[
-                                styles.menuItem,
-                                index === menuItems.length - 1 && styles.menuItemLast,
-                            ]}
-                            onPress={item.onPress}
-                            activeOpacity={0.7}
-                        >
-                            <View style={styles.menuLeft}>
-                                <View
-                                    style={[
-                                        styles.menuIconCircle,
-                                        item.color === theme.colors.error && styles.menuIconCircleError,
-                                    ]}
-                                >
-                                    <MaterialCommunityIcons
-                                        name={item.icon}
-                                        size={20}
-                                        color={item.color}
-                                    />
-                                </View>
-                                <Text style={[styles.menuLabel, { color: item.color }]}>
-                                    {item.label}
-                                </Text>
-                            </View>
-                            <View style={styles.menuRight}>
-                                {item.count !== undefined && (
-                                    <View style={styles.badge}>
-                                        <Text style={styles.badgeText}>{item.count}</Text>
-                                    </View>
-                                )}
-                                <MaterialCommunityIcons
-                                    name="chevron-right"
-                                    size={20}
-                                    color={theme.colors.textLight}
-                                />
-                            </View>
-                        </TouchableOpacity>
+                            item={item}
+                            index={index}
+                            isLast={index === menuItems.length - 1}
+                        />
                     ))}
-                </View>
+                </Animated.View>
 
                 {/* App Version */}
                 <Text style={styles.version}>PlayNxt v1.0.0</Text>
@@ -202,6 +315,16 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: theme.colors.background,
+    },
+    loadingContainer: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    loadingText: {
+        fontSize: theme.fontSizes.base,
+        fontFamily: theme.fonts.regular,
+        color: theme.colors.textSecondary,
     },
     headerGradient: {
         paddingBottom: theme.spacing['2xl'],
@@ -220,10 +343,10 @@ const styles = StyleSheet.create({
         color: theme.colors.secondary,
     },
     editButton: {
-        width: 40,
-        height: 40,
+        width: 44,
+        height: 44,
         borderRadius: theme.borderRadius.md,
-        backgroundColor: 'rgba(26, 29, 41, 0.2)',
+        backgroundColor: 'rgba(26, 29, 41, 0.15)',
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -250,6 +373,7 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.surface,
         borderRadius: theme.borderRadius.full,
         padding: 2,
+        ...theme.shadows.sm,
     },
     name: {
         fontSize: theme.fontSizes['2xl'],
@@ -261,7 +385,7 @@ const styles = StyleSheet.create({
         fontSize: theme.fontSizes.base,
         fontFamily: theme.fonts.regular,
         color: theme.colors.secondary,
-        opacity: 0.8,
+        opacity: 0.85,
     },
     scrollContent: {
         paddingBottom: theme.spacing['3xl'],
@@ -276,19 +400,18 @@ const styles = StyleSheet.create({
     statCard: {
         flex: 1,
         backgroundColor: theme.colors.surface,
-        borderRadius: theme.borderRadius.lg,
-        padding: theme.spacing.base,
+        borderRadius: theme.borderRadius.xl,
+        padding: theme.spacing.lg,
         alignItems: 'center',
-        ...theme.shadows.sm,
+        ...theme.shadows.md,
     },
     statIconCircle: {
-        width: 48,
-        height: 48,
+        width: 52,
+        height: 52,
         borderRadius: theme.borderRadius.full,
-        backgroundColor: theme.colors.background,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: theme.spacing.sm,
+        marginBottom: theme.spacing.md,
     },
     statValue: {
         fontSize: theme.fontSizes['2xl'],
@@ -300,20 +423,24 @@ const styles = StyleSheet.create({
         fontSize: theme.fontSizes.xs,
         fontFamily: theme.fonts.medium,
         color: theme.colors.textSecondary,
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
     },
     menuContainer: {
         backgroundColor: theme.colors.surface,
         marginHorizontal: theme.spacing.base,
-        borderRadius: theme.borderRadius.lg,
-        padding: theme.spacing.sm,
-        ...theme.shadows.sm,
+        borderRadius: theme.borderRadius.xl,
+        padding: theme.spacing.md,
+        ...theme.shadows.md,
     },
     menuSectionTitle: {
-        fontSize: theme.fontSizes.base,
+        fontSize: theme.fontSizes.sm,
         fontFamily: theme.fonts.semiBold,
         color: theme.colors.textSecondary,
         paddingHorizontal: theme.spacing.md,
         paddingVertical: theme.spacing.sm,
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
     },
     menuItem: {
         flexDirection: 'row',
@@ -321,7 +448,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: theme.spacing.md,
         paddingHorizontal: theme.spacing.md,
-        borderRadius: theme.borderRadius.md,
+        borderRadius: theme.borderRadius.lg,
         marginBottom: 4,
     },
     menuItemLast: {
@@ -353,16 +480,15 @@ const styles = StyleSheet.create({
         gap: theme.spacing.sm,
     },
     badge: {
-        backgroundColor: theme.colors.primary,
         paddingHorizontal: theme.spacing.sm,
-        paddingVertical: 3,
+        paddingVertical: 4,
         borderRadius: theme.borderRadius.full,
-        minWidth: 24,
+        minWidth: 26,
         alignItems: 'center',
     },
     badgeText: {
         fontSize: 11,
-        fontFamily: theme.fonts.semiBold,
+        fontFamily: theme.fonts.bold,
         color: theme.colors.secondary,
     },
     version: {

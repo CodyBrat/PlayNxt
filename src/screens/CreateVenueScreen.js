@@ -357,12 +357,12 @@ const styles = StyleSheet.create({
     },
     input: {
         backgroundColor: theme.colors.surface,
-        borderRadius: theme.borderRadius.md,
-        padding: theme.spacing.md,
+        borderRadius: theme.borderRadius.lg,
+        padding: theme.spacing.base,
         fontSize: theme.fontSizes.base,
         color: theme.colors.text,
         fontFamily: theme.fonts.regular,
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: theme.colors.border,
     },
     textArea: {
@@ -419,8 +419,8 @@ const styles = StyleSheet.create({
     imagePicker: {
         height: 200,
         backgroundColor: theme.colors.surface,
-        borderRadius: theme.borderRadius.lg,
-        borderWidth: 1,
+        borderRadius: theme.borderRadius.xl,
+        borderWidth: 2,
         borderColor: theme.colors.border,
         borderStyle: 'dashed',
         overflow: 'hidden',
