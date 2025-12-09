@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: playnxt-backend
+    env: node
+    region: mumbai
+    buildCommand: cd backend && npm install && npx prisma generate
+    startCommand: cd backend && npm start
+    branch: main
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: NODE_ENV
+        value: production
