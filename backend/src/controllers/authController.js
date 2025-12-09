@@ -153,13 +153,15 @@ export const updateProfile = async (req, res) => {
         const userId = req.user.id;
         const { name, phone, avatar } = req.body;
 
+        // Only include fields that are provided
+        const updateData = {};
+        if (name !== undefined) updateData.name = name;
+        if (phone !== undefined) updateData.phone = phone;
+        if (avatar !== undefined) updateData.avatar = avatar;
+
         const updatedUser = await prisma.user.update({
             where: { id: userId },
-            data: {
-                name,
-                phone,
-                avatar,
-            },
+            data: updateData,
             select: {
                 id: true,
                 name: true,
@@ -179,7 +181,8 @@ export const updateProfile = async (req, res) => {
             user: updatedUser,
         });
     } catch (error) {
-        console.error('Update profile error:', error);
-        res.status(500).json({ error: 'Failed to update profile' });
+        console.error('Update profile error:', error.message);
+        console.error('Update profile full error:', error);
+        res.status(500).json({ error: 'Failed to update profile', details: error.message });
     }
 };
