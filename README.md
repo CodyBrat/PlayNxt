@@ -23,19 +23,8 @@
 <br/>
 
 ## 🎬 Demo
-
-<!-- 📹 VIDEO PLACEHOLDER - Replace with your video link -->
 <div align="center">
-
-> 🎥 **Coming Soon!** Video demo will be added here.
-> 
-> *Replace this section with your video link*
-
-```
-<!-- Example: Embed your video here -->
-<!-- [![PlayNxt Demo](thumbnail.png)](YOUR_VIDEO_URL) -->
-```
-
+https://drive.google.com/file/d/1GcO2O99T20hHCncjNsEBIO5FcDs0t74F/view?usp=sharing
 </div>
 
 ---
