@@ -4,29 +4,9 @@ import Constants from 'expo-constants';
 import { getToken } from '../utils/storage';
 
 const getApiUrl = () => {
-    if (!__DEV__) {
-        return 'https://your-production-api.com/api';
-    }
-
-    const expoConfig = Constants.expoConfig;
-    const manifest = Constants.manifest;
-
-    const debuggerHost = expoConfig?.hostUri || manifest?.debuggerHost;
-
-    if (debuggerHost) {
-        const host = debuggerHost.split(':').shift();
-        const apiUrl = `http://${host}:3000/api`;
-        console.log('Using debuggerHost:', debuggerHost, '→', apiUrl);
-        return apiUrl;
-    }
-
-    if (Platform.OS === 'android') {
-        console.log('Android emulator detected');
-        return 'http://10.0.2.2:3000/api';
-    }
-
-    console.log('iOS simulator detected');
-    return 'http://127.0.0.1:3000/api';
+    const API_URL = 'https://playnxt.onrender.com/api';
+    console.log('Using Hosted API URL:', API_URL);
+    return API_URL;
 };
 
 const API_URL = getApiUrl();
