@@ -1,6 +1,6 @@
 <div align="center">
   
-# 🏟️ PlayNxt
+# PlayNxt
 
 ### *Find. Book. Play.*
 
@@ -14,7 +14,7 @@
 
 <br/>
 
-[🎬 Watch Demo](#-demo) • [✨ Features](#-features) • [🚀 Quick Start](#-quick-start) • [📖 Docs](#-api-documentation) • [🤝 Contribute](#-contributing)
+[Watch Demo](#demo) • [Features](#features) • [Quick Start](#quick-start) • [Docs](#api-documentation) • [Contribute](#contributing)
 
 ---
 
@@ -22,20 +22,20 @@
 
 <br/>
 
-## 🎬 Demo
+## Demo
 <div align="center">
 https://drive.google.com/file/d/1GcO2O99T20hHCncjNsEBIO5FcDs0t74F/view?usp=sharing
 </div>
 
 ---
 
-## � What is PlayNxt?
+## What is PlayNxt?
 
 **PlayNxt** is a sleek, modern sports venue booking app that bridges the gap between **sports enthusiasts** and **venue owners**. Whether you're looking to book a football turf for a weekend match or manage your sports facility, PlayNxt makes it seamless.
 
 <div align="center">
 
-| 🎯 **For Players** | 🏢 **For Providers** |
+| **For Players** | **For Providers** |
 |:-:|:-:|
 | Discover & book venues instantly | List & manage your venues |
 | Real-time slot availability | Track bookings & revenue |
@@ -46,28 +46,28 @@ https://drive.google.com/file/d/1GcO2O99T20hHCncjNsEBIO5FcDs0t74F/view?usp=shari
 
 ---
 
-## ✨ Features
+## Features
 
 <table>
 <tr>
 <td width="50%">
 
-### 🏃 **Players**
-- 🔍 **Smart Discovery** — Browse by sport, location, rating
-- 📅 **Instant Booking** — Real-time availability
-- ⭐ **Favorites** — Quick access to loved venues
-- � **Booking History** — Track all your games
-- 🏆 **Reward Points** — Earn as you play!
+### **Players**
+- **Smart Discovery** — Browse by sport, location, rating
+- **Instant Booking** — Real-time availability
+- **Favorites** — Quick access to loved venues
+- **Booking History** — Track all your games
+- **Reward Points** — Earn as you play!
 
 </td>
 <td width="50%">
 
-### 🏟️ **Providers**
-- 📊 **Dashboard Analytics** — Revenue & booking insights
-- 🖼️ **Rich Listings** — Photos, facilities, pricing
-- � **Customer Management** — View booking details
-- ⏰ **Slot Control** — Flexible time management
-- 📱 **Mobile First** — Manage on the go
+### **Providers**
+- **Dashboard Analytics** — Revenue & booking insights
+- **Rich Listings** — Photos, facilities, pricing
+- **Customer Management** — View booking details
+- **Slot Control** — Flexible time management
+- **Mobile First** — Manage on the go
 
 </td>
 </tr>
@@ -75,7 +75,7 @@ https://drive.google.com/file/d/1GcO2O99T20hHCncjNsEBIO5FcDs0t74F/view?usp=shari
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 <div align="center">
 
@@ -100,7 +100,7 @@ https://drive.google.com/file/d/1GcO2O99T20hHCncjNsEBIO5FcDs0t74F/view?usp=shari
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -111,7 +111,7 @@ MongoDB (local or Atlas)
 Expo CLI
 ```
 
-### 1️⃣ Clone & Install
+### Clone & Install
 
 ```bash
 # Clone the repo
@@ -125,7 +125,7 @@ npm install
 cd backend && npm install
 ```
 
-### 2️⃣ Configure Environment
+### Configure Environment
 
 ```bash
 # Create .env in backend/
@@ -138,7 +138,7 @@ JWT_EXPIRES_IN="7d"
 PORT=3000
 ```
 
-### 3️⃣ Launch! 🚀
+### Launch! 🚀
 
 ```bash
 # Terminal 1: Start Backend
@@ -152,18 +152,18 @@ cd PlayNxt && npm start
 
 | Platform | Command |
 |:--------:|:-------:|
-| 📱 iOS | `npm run ios` |
-| 🤖 Android | `npm run android` |
-| 🌐 Web | `npm run web` |
+| iOS | `npm run ios` |
+| Android | `npm run android` |
+| Web | `npm run web` |
 
 </div>
 
 ---
 
-## 📡 API Documentation
+## API Documentation
 
 <details>
-<summary><b>🔐 Authentication</b></summary>
+<summary><b>Authentication</b></summary>
 
 ```http
 POST /api/auth/register    # Create account
@@ -176,7 +176,7 @@ POST /api/auth/logout      # Logout
 </details>
 
 <details>
-<summary><b>🏟️ Venues</b></summary>
+<summary><b>Venues</b></summary>
 
 ```http
 GET    /api/venues              # List all venues
@@ -190,7 +190,7 @@ GET    /api/venues/my-venues/list   # My venues (Provider)
 </details>
 
 <details>
-<summary><b>📅 Bookings</b></summary>
+<summary><b>Bookings</b></summary>
 
 ```http
 POST /api/bookings              # Create booking
@@ -202,32 +202,32 @@ PUT  /api/bookings/:id/cancel   # Cancel booking
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 PlayNxt/
-├── 📱 src/
-│   ├── 🧩 components/     # Reusable UI components
-│   ├── 🎭 context/        # State management (React Context)
-│   ├── 📍 navigation/     # App navigation
-│   ├── 📺 screens/        # App screens
-│   ├── 🔌 services/       # API layer
-│   └── 🎨 theme/          # Design system
+├── src/
+│   ├── components/     # Reusable UI components
+│   ├── context/        # State management (React Context)
+│   ├── navigation/     # App navigation
+│   ├── screens/        # App screens
+│   ├── services/       # API layer
+│   └── theme/          # Design system
 │
-└── 🔧 backend/
-    ├── 📐 prisma/         # Database schema
-    ├── 🎮 controllers/    # Business logic
-    ├── 🛡️ middleware/     # Auth & validation
-    └── 🛤️ routes/         # API endpoints
+└── backend/ 
+    ├── prisma/         # Database schema
+    ├── controllers/    # Business logic
+    ├── middleware/     # Auth & validation
+    └── routes/         # API endpoints
 ```
 
 ---
 
-## 🎨 Design Philosophy
+## Design Philosophy
 
 <div align="center">
 
-| 🌙 Dark Mode | 💎 Glassmorphism | ⚡ Smooth Animations |
+| Dark Mode | Glassmorphism | Smooth Animations |
 |:------------:|:----------------:|:--------------------:|
 | Easy on eyes | Modern aesthetics | Fluid interactions |
 
@@ -239,21 +239,21 @@ PlayNxt/
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
 - [x] Core booking flow
 - [x] Provider dashboard
 - [x] Reward points system
 - [x] Cross-device image sync
-- [ ] 💳 Payment integration (Razorpay/Stripe)
-- [ ] 🔔 Push notifications
-- [ ] 💬 In-app messaging
-- [ ] ⭐ Reviews & ratings
-- [ ] 🌍 Multi-language support
+- [ ] Payment integration (Razorpay/Stripe)
+- [ ] Push notifications
+- [ ] In-app messaging
+- [ ] Reviews & ratings
+- [ ] Multi-language support
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We love contributions! Check out our [**Contributing Guide**](CONTRIBUTING.md) to get started.
 
@@ -266,7 +266,7 @@ git push origin feature/awesome-feature
 
 ---
 
-## 📝 License
+## License
 
 MIT License — feel free to use this project for learning and building!
 
